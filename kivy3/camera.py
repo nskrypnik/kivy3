@@ -34,7 +34,15 @@ camera object in the 3D space
 __all__ = ('Camera', )
 
 from kivy.event import EventDispatcher
+from kivy.properties import NumericProperty, ListProperty 
 
 
 class Camera(EventDispatcher):
-    pass
+    
+    pos = ListProperty([0, 0, 0])
+    scale = NumericProperty(1.0)
+    up = ListProperty([0, 0, 0])
+    
+    def __init__(self, scene):
+        super(Camera, self).__init__()
+        self.scene = scene
