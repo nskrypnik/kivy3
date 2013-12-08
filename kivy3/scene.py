@@ -24,18 +24,42 @@ THE SOFTWARE.
 """
 
 from kivy.uix.widget import Widget
-from kivy.graphics.fbo import Fbo
 from kivy.resources import resource_find
+from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
+from kivy.graphics.fbo import Fbo
+from kivy.graphics import Callback, PushMatrix, PopMatrix, \
+                          Rectangle, Canvas, Matrix
+
+
 
 from .camera import Camera
 
 
 class Renderer(Fbo):
-    
+
     def __init__(self, *args, **kw):
         kw.setdefault('with_depthbuffer', True)
         kw.setdefault('compute_normal_mat', True)
         
+        with self:
+            self.cb = Callback(self.setup_gl_context)
+            PushMatrix()
+            PopMatrix()
+            self.cb = Callback(self.reset_gl_context)
+    
+    def setup_gl_context(self, *args):
+        #clear_buffer
+        glEnable(GL_DEPTH_TEST)
+        self.fbo.clear_buffer()
+
+    def reset_gl_context(self, *args):
+        glDisable(GL_DEPTH_TEST)
+    
+    def update_glsl(self, *largs):
+        asp = self.width / float(self.height)
+        proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
+        self.fbo['projection_mat'] = proj
+
 
 class Scene(Widget):
     """ Core class which allows you to use 3D graphics in
@@ -50,6 +74,8 @@ class Scene(Widget):
     def __init__(self, camera_cls=Camera, renderer_cls=Renderer, **kw):
         
         self.objects = []
+        self.viewport = None # scene viewport
+        self.canvas = Canvas()
         
         # get clear color 
         self.clear_color = kw.pop('clear_color', (0., 0., 0., 1.))
@@ -61,7 +87,9 @@ class Scene(Widget):
         # create FBO where all drawing is going
         with self.canvas:
             self.renderer = Renderer(size=self.size, clear_color=self.clear_color)
-            self.renderer.shader.source = self.shader_file 
+            self.viewport = Rectangle(size=self.size, pos=self.pos)
+
+        self.renderer.shader.source = self.shader_file
     
     def add(self, *objs):
         """ Add objects to 3D scene """
@@ -70,5 +98,14 @@ class Scene(Widget):
     
     def _add_obj(self, obj):
         self.objects.append(obj)
+        
+    def on_size(self, instance, value):
+        self.renderer.size = value
+        self.viewport.texture = self.fbo.texture
+        self.viewport.size = value
+        self.renderer.update_glsl()
+        
+    def on_texture(self, instance, value):
+        self.viewport.texture = value
     
  

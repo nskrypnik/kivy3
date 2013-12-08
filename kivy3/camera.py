@@ -43,6 +43,12 @@ class Camera(EventDispatcher):
     scale = NumericProperty(1.0)
     up = ListProperty([0, 0, 0])
     
-    def __init__(self, scene):
+    def __init__(self, scene=None):
         super(Camera, self).__init__()
         self.scene = scene
+    
+    def on_pos(self, instance, pos):
+        """ Camera position was changed """
+        
+    def on_scale(self, instance, scale):
+        """ Handler for change scale parameter event """
