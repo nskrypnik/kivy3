@@ -41,11 +41,10 @@ class Renderer(Fbo):
         kw.setdefault('with_depthbuffer', True)
         kw.setdefault('compute_normal_mat', True)
         
-        with self:
-            self.cb = Callback(self.setup_gl_context)
-            PushMatrix()
-            PopMatrix()
-            self.cb = Callback(self.reset_gl_context)
+        self.cb_before = Callback(self.setup_gl_context)
+        self.push_matrix = PushMatrix()
+        self.pop_matrix = PopMatrix()
+        self.cb_after = Callback(self.reset_gl_context)
     
     def setup_gl_context(self, *args):
         #clear_buffer
