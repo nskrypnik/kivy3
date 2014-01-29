@@ -27,8 +27,9 @@ from kivy.uix.widget import Widget
 from kivy.resources import resource_find
 from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
 from kivy.graphics.fbo import Fbo
+from kivy.graphics.transformation import Matrix
 from kivy.graphics import Callback, PushMatrix, PopMatrix, \
-                          Rectangle, Canvas, Matrix
+                          Rectangle, Canvas
 
 
 

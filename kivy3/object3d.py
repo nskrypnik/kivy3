@@ -30,7 +30,8 @@ Object3D class
 """
 
 from kivy.properties import NumericProperty, ListProperty
-from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate
+from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, \
+                          Mesh
 from kivy.event import EventDispatcher
 
 class Object3D(EventDispatcher):
@@ -44,7 +45,7 @@ class Object3D(EventDispatcher):
     def __init__(self, **kw):
         
         super(Object3D, self).__init__(**kw)
-        
+        self.name = kw.pop('name', '')
         self._pop_matrix = PopMatrix()
         self._push_matrix = PushMatrix()
         self._translate = Translate(*self.pos)        
@@ -52,7 +53,12 @@ class Object3D(EventDispatcher):
         self._rotate_x = Rotate(self.angle_x, 1, 0, 0)
         self._rotate_y = Rotate(self.angle_y, 0, 1, 0)
         self._rotate_z = Rotate(self.angle_y, 0, 0, 1)
-        self.mesh = None
+        
+        mesh_data = kw.pop('mesh', None)
+        if mesh_data:
+            self.set_mesh(mesh_data)
+        else:
+            self.mesh = None
         
         self._instructions = None
         
@@ -72,7 +78,17 @@ class Object3D(EventDispatcher):
         self._scale.xyz = (val, val, val)
                 
     def set_mesh(self, mesh):
-        self.mesh = mesh
+        if isinstance(mesh, Mesh):
+            self.mesh = mesh
+        else:
+            # normally it should be RawMeshData
+            self.mesh = Mesh(
+                vertices=mesh.vertices,
+                indices=mesh.indices,
+                fmt=mesh.vertex_format,
+                mode='triangles',
+                #texture=texture,
+            )
     
     def as_instructions(self):
         """ Get instructions set for renderer """
