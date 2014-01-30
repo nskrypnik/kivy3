@@ -94,6 +94,6 @@ class Object3D(EventDispatcher):
         """ Get instructions set for renderer """
         if not self._instructions:
             self._instructions = [self._push_matrix, self._translate, self._rotate_x,
-                                  self._rotate_y, self._rotate_z, self.scale, self.mesh]
+                                  self._rotate_y, self._rotate_z, self._scale, self.mesh]
         return self._instructions
 

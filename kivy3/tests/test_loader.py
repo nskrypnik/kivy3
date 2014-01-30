@@ -18,7 +18,6 @@ class WaveLoadertestCase(unittest.TestCase):
         obj_path = os.path.join(this_dir, 'testnurbs.obj')
         objects = loader.load(obj_path)
         self.assertEqual(len(objects), 4)
-        import ipdb; ipdb.set_trace()
 
 
 if __name__ == '__main__':

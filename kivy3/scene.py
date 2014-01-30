@@ -42,23 +42,33 @@ class Renderer(Fbo):
         kw.setdefault('with_depthbuffer', True)
         kw.setdefault('compute_normal_mat', True)
         
+        super(Renderer, self).__init__(*args, **kw)
+        
         self.cb_before = Callback(self.setup_gl_context)
         self.push_matrix = PushMatrix()
         self.pop_matrix = PopMatrix()
         self.cb_after = Callback(self.reset_gl_context)
     
     def setup_gl_context(self, *args):
-        #clear_buffer
         glEnable(GL_DEPTH_TEST)
-        self.fbo.clear_buffer()
+        self.clear_buffer()
 
     def reset_gl_context(self, *args):
         glDisable(GL_DEPTH_TEST)
+        
+    def load_objects(self, objects):
+        self.add(self.cb_before)
+        self.add(self.push_matrix)
+        for obj in objects:
+            for i in obj.as_instructions():
+                self.add(i)
+        self.add(self.pop_matrix)
+        self.add(self.cb_after)
     
     def update_glsl(self, *largs):
-        asp = self.width / float(self.height)
+        asp = self.size[0] / float(self.size[1])
         proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
-        self.fbo['projection_mat'] = proj
+        self['projection_mat'] = proj
 
 
 class Scene(Widget):
@@ -78,7 +88,7 @@ class Scene(Widget):
         self.canvas = Canvas()
         
         # get clear color 
-        self.clear_color = kw.pop('clear_color', (0., 0., 0., 1.))
+        self.clear_color = kw.pop('clear_color', (0., 0., 0., 0.))
         self.shader_file = kw.pop('shader_file', resource_find('default.glsl'))
          
         super(Scene, self).__init__(**kw)
@@ -86,7 +96,7 @@ class Scene(Widget):
         
         # create FBO where all drawing is going
         with self.canvas:
-            self.renderer = Renderer(size=self.size, clear_color=self.clear_color)
+            self.renderer = renderer_cls(size=self.size, clear_color=self.clear_color)
             self.viewport = Rectangle(size=self.size, pos=self.pos)
 
         self.renderer.shader.source = self.shader_file
@@ -95,13 +105,18 @@ class Scene(Widget):
         """ Add objects to 3D scene """
         for obj in objs:
             self._add_obj(obj)
+        self.reload_scene()
     
     def _add_obj(self, obj):
         self.objects.append(obj)
         
+    def reload_scene(self):
+        self.renderer.clear()
+        self.renderer.load_objects(self.objects)
+        
     def on_size(self, instance, value):
         self.renderer.size = value
-        self.viewport.texture = self.fbo.texture
+        self.viewport.texture = self.renderer.texture
         self.viewport.size = value
         self.renderer.update_glsl()
         

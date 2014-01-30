@@ -22,16 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+import os
+import kivy3
 from kivy.app import App
-from kivy.uix.widget import Widget
 from kivy3 import Scene
-
+from kivy3.loaders import WaveLoader
+from kivy.uix.floatlayout import FloatLayout
+from kivy.graphics import Translate 
 
 class MainApp(App):
     
     def build(self):
-        root = Widget()
-        scene = Scene()
+        root = FloatLayout()
+        scene = Scene(shader_file="simple.glsl")
+        # load obj file
+        loader = WaveLoader()
+        obj_path = os.path.join(os.path.dirname(kivy3.__file__), "tests/testnurbs.obj")
+        objects = loader.load(obj_path)
+        scene.add(*objects)
+        scene.renderer.before.add(Translate(0, 0, -5))
         root.add_widget(scene)
         return root
 
