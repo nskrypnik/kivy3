@@ -104,7 +104,7 @@ class WaveLoader:
     def _convert_to_objects(self, wave_objects):
         objects = []
         for wvobj in wave_objects:
-            obj = Object3D(mesh=wvobj.to_mesh_data())
+            obj = Object3D(mesh=wvobj.to_mesh_data(), name=wvobj.name)
             objects.append(obj)
         return objects
 

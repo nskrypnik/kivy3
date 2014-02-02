@@ -62,7 +62,7 @@ class Object3D(EventDispatcher):
         
         self._instructions = None
         
-    def on_pos(self, val):
+    def on_pos(self, inst, val):
         self._translate.xyz = val
     
     def on_angle_x(self, inst, val):

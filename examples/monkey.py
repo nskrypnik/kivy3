@@ -28,23 +28,29 @@ from kivy.app import App
 from kivy3 import Scene
 from kivy3.loaders import WaveLoader
 from kivy.uix.floatlayout import FloatLayout
-from kivy.graphics import Translate 
+from kivy.graphics import Translate
+from kivy.clock import Clock 
 
 class MainApp(App):
     
     def build(self):
         root = FloatLayout()
-        scene = Scene(shader_file="simple.glsl")
+        self.scene = Scene(shader_file="simple.glsl")
         # load obj file
         loader = WaveLoader()
-        obj_path = os.path.join(os.path.dirname(kivy3.__file__), "tests/testnurbs.obj")
-        objects = loader.load(obj_path)
-        scene.add(*objects)
+        objects = loader.load("monkey.obj")
+        self.scene.add(*objects)
         for obj in objects:
-            obj.pos = (0, 0, 0)
-        #scene.renderer.before.add(Translate(0, 0, -5))
-        root.add_widget(scene)
+            obj.pos = (0, 0, 1)
+        root.add_widget(self.scene)
+        Clock.schedule_interval(self._update_obj, 1./20)
         return root
+    
+    def _update_obj(self, dt):
+        obj = self.scene.objects[0]
+        xyz = obj.pos
+        xyz[2] -= 0.1
+        obj.pos = xyz
 
 
 if __name__ == '__main__':

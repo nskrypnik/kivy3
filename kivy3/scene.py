@@ -29,7 +29,7 @@ from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
 from kivy.graphics.fbo import Fbo
 from kivy.graphics.transformation import Matrix
 from kivy.graphics import Callback, PushMatrix, PopMatrix, \
-                          Rectangle, Canvas
+                          Rectangle, Canvas, UpdateNormalMatrix
 
 
 
@@ -46,6 +46,7 @@ class Renderer(Fbo):
         
         self.cb_before = Callback(self.setup_gl_context)
         self.push_matrix = PushMatrix()
+        self.update_matrix = UpdateNormalMatrix() 
         self.pop_matrix = PopMatrix()
         self.cb_after = Callback(self.reset_gl_context)
     
@@ -57,8 +58,10 @@ class Renderer(Fbo):
         glDisable(GL_DEPTH_TEST)
         
     def load_objects(self, objects):
+        self.clear()
         self.add(self.cb_before)
         self.add(self.push_matrix)
+        self.add(self.update_matrix)
         for obj in objects:
             for i in obj.as_instructions():
                 self.add(i)
@@ -111,7 +114,6 @@ class Scene(Widget):
         self.objects.append(obj)
         
     def reload_scene(self):
-        self.renderer.clear()
         self.renderer.load_objects(self.objects)
         
     def on_size(self, instance, value):
