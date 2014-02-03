@@ -8,4 +8,5 @@ setup(name='Kivy3',
       author='Niko Skrypnik',
       author_email='nskrypnik@gmail.com',
       packages=['kivy3', ],
-     )
+      requires=['kivy', ]
+    )
