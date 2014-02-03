@@ -70,7 +70,8 @@ class Renderer(Fbo):
     
     def update_glsl(self, *largs):
         asp = self.size[0] / float(self.size[1])
-        proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
+        proj = Matrix().view_clip(-asp*0.1, asp*0.1, -1*0.1, 1*0.1, 1*0.1, 100, 1)
+        #proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
         self['projection_mat'] = proj
 
 

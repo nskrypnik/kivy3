@@ -49,8 +49,9 @@ class MainApp(App):
     def _update_obj(self, dt):
         obj = self.scene.objects[0]
         xyz = obj.pos
-        xyz[2] -= 0.1
-        obj.pos = xyz
+        if xyz[2] > -3:
+            xyz[2] -= 0.1
+            obj.pos = xyz
 
 
 if __name__ == '__main__':

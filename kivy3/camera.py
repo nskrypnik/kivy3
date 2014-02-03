@@ -34,21 +34,28 @@ camera object in the 3D space
 __all__ = ('Camera', )
 
 from kivy.event import EventDispatcher
-from kivy.properties import NumericProperty, ListProperty 
+from kivy.properties import NumericProperty, ListProperty, ObjectProperty 
 
 
 class Camera(EventDispatcher):
     
-    pos = ListProperty([0, 0, 0])
+    position = ObjectProperty([0, 0, 0])
     scale = NumericProperty(1.0)
-    up = ListProperty([0, 0, 0])
+    up = ObjectProperty([0, 0, 0])
     
     def __init__(self, scene=None):
         super(Camera, self).__init__()
         self.scene = scene
     
-    def on_pos(self, instance, pos):
+    def on_position(self, instance, pos):
         """ Camera position was changed """
+        
         
     def on_scale(self, instance, scale):
         """ Handler for change scale parameter event """
+
+
+class PerspectiveCamera(Camera):
+    pass
+    
+    
