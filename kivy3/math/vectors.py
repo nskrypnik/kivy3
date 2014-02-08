@@ -64,3 +64,7 @@ class BaseVector(list):
     
     
     """
+
+
+class Vector3(BaseVector):
+    pass
