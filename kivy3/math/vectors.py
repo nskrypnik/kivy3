@@ -31,3 +31,36 @@ class BaseVector(list):
     """
         BaseVector is actually 4D vector for optimization
     """
+    
+    """
+    x, y, z, w
+    
+    add, same as plus
+    
+    add_vectors
+    
+    sub, same as minus
+    
+    multiply_scalar, as *
+    
+    devide_scalar
+    
+    add_scalar
+    
+    min
+    
+    max
+    
+    clamp
+    
+    negatiate
+    
+    length
+    
+    normalize
+    
+    distance_to
+    
+    
+    
+    """
