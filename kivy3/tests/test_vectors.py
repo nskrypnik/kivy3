@@ -56,6 +56,22 @@ class Vector3Test(unittest.TestCase):
         self.assertEqual(v1 / v2, [3., 2., 4.])
         v1.divide(v2)
         self.assertEqual(v1, [3., 2., 4.])
+        
+    def test_minmax(self):
+        v = Vector3(6, 7, 4)
+        v1 = Vector3(3, 5, 8)
+        v.min(v1)
+        self.assertEqual(v, [3, 5, 4])
+        v2 = Vector3(1, 7, 6)
+        v.max(v2)
+        self.assertEqual(v, [3, 7, 6])
+        
+    def test_clamp(self):
+        v1 = Vector3(1, 2, 3)
+        v2  = Vector3(3, 4, 6)
+        v = Vector3(0, 5, 4)
+        v.clamp(v1, v2)
+        self.assertEqual(v, [1, 4, 4])
 
 
 if __name__ == '__main__':

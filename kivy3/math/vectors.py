@@ -123,14 +123,28 @@ class BaseVector(list):
     def divide_vectors(self, first, second):
         return first / second
     
-    
+    def min(self, v):
+        for i in self._indeces: 
+            if v[i] < self[i]:
+                self[i] = v[i]
+
+    def max(self, v):
+        for i in self._indeces: 
+            if v[i] > self[i]:
+                self[i] = v[i]
+                
+    def clamp(self, vmin, vmax):
+        """ This function assumes min < max, if this assumption isn't true it will not operate correctly """
+        for i in self._indeces:
+            if self[i] < vmin[i]:
+                self[i] = vmin[i]
+            elif self[i] > vmax[i]:
+                self[i] = vmax[i]
+                
+        
     """
     x, y, z, w
         
-    min
-    
-    max
-    
     clamp
     
     negatiate
@@ -154,4 +168,9 @@ class Vector3(BaseVector):
     _d = 3
     _indeces = [0, 1, 2]
     _null = [0, 0, 0]
-        
+
+
+class Vector2(BaseVector):
+    _d = 2
+    _indeces = [0, 1]
+    _null = [0, 0]
