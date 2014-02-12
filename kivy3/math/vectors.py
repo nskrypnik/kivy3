@@ -140,15 +140,14 @@ class BaseVector(list):
                 self[i] = vmin[i]
             elif self[i] > vmax[i]:
                 self[i] = vmax[i]
+    
+    def negate(self):
+        self.set_vector(self * -1)
                 
         
     """
     x, y, z, w
         
-    clamp
-    
-    negatiate
-    
     length
     
     normalize

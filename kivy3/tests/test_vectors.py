@@ -72,7 +72,12 @@ class Vector3Test(unittest.TestCase):
         v = Vector3(0, 5, 4)
         v.clamp(v1, v2)
         self.assertEqual(v, [1, 4, 4])
-
+    
+    def test_negate(self):
+        v = Vector3(2, 2, 2)
+        v.negate()
+        self.assertEqual(v, [-2, -2, -2])
+        
 
 if __name__ == '__main__':
     unittest.main()
