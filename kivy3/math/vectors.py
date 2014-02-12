@@ -26,27 +26,107 @@ __all__ = ('Vector2', 'Vector3', 'Vector4', )
 
 import math
 
+from copy import copy
+
 
 class BaseVector(list):
     """
         BaseVector is actually 4D vector for optimization
     """
     
+    _d = 4 # dimension size
+    _indeces = [0, 1, 2, 3]
+    _null = [0, 0, 0, 0]
+    
+    def __init__(self, *largs):
+        if len(largs) == 1:
+            if len(largs[0]) == self._d:
+                super(BaseVector, self).__init__(largs[0])
+            else:
+                raise Exception('Invalid vector')
+        else:
+            if len(largs) == self._d:
+                super(BaseVector, self).__init__(largs)
+            else:
+                raise Exception('Invalid vector')
+            
+    def set_vector(self, v):
+        for i in self._indeces:
+            self[i] = v[i]
+            
+    def __add__(self, other):
+        res = copy(self._null)
+        
+        if isinstance(other, BaseVector):
+            for i in self._indeces:
+                res[i] = self[i] + other[i]
+        else:
+            for i in self._indeces:
+                res[i] = self[i] + other
+        return self.__class__(res)
+    
+    def add(self, other):
+        self.set_vector(self + other)
+    
+    @classmethod
+    def add_vectors(cls, first, second):
+        return first + second
+    
+    def __sub__(self, other):
+        res = copy(self._null)
+        if isinstance(other, BaseVector):
+            for i in self._indeces:
+                res[i] = self[i] - other[i]
+        else:
+            for i in self._indeces:
+                res[i] = self[i] - other
+        return self.__class__(res)
+    
+    def sub(self, other):
+        self.set_vector(self - other)
+    
+    @classmethod
+    def sub_vectors(self, first, second):
+        return first - second
+    
+    def __mul__(self, other):
+        res = copy(self._null)
+        if isinstance(other, BaseVector):
+            for i in self._indeces:
+                res[i] = self[i] * float(other[i])
+        else:
+            for i in self._indeces:
+                res[i] = self[i] * float(other)
+        return self.__class__(res)
+    
+    def multiply(self, other):
+        self.set_vector(self * other)
+        
+    @classmethod
+    def multiply_vectors(self, first, second):
+        return first * second
+    
+    def __div__(self, other):
+        res = copy(self._null)
+        if isinstance(other, BaseVector):
+            for i in self._indeces:
+                res[i] = self[i] / float(other[i])
+        else:
+            for i in self._indeces:
+                res[i] = self[i] / float(other)
+        return self.__class__(res)
+    
+    def divide(self, other):
+        self.set_vector(self / other)
+    
+    @classmethod
+    def divide_vectors(self, first, second):
+        return first / second
+    
+    
     """
     x, y, z, w
-    
-    add, same as plus
-    
-    add_vectors
-    
-    sub, same as minus
-    
-    multiply_scalar, as *
-    
-    devide_scalar
-    
-    add_scalar
-    
+        
     min
     
     max
@@ -66,5 +146,12 @@ class BaseVector(list):
     """
 
 
-class Vector3(BaseVector):
+class Vector4(BaseVector):
     pass
+
+
+class Vector3(BaseVector):
+    _d = 3
+    _indeces = [0, 1, 2]
+    _null = [0, 0, 0]
+        
