@@ -71,7 +71,7 @@ class BaseVector(list):
     @classmethod
     def add_vectors(cls, first, second):
         return first + second
-    
+
     def __sub__(self, other):
         res = copy(self._null)
         if isinstance(other, BaseVector):
@@ -81,14 +81,14 @@ class BaseVector(list):
             for i in self._indeces:
                 res[i] = self[i] - other
         return self.__class__(res)
-    
+
     def sub(self, other):
         self.set_vector(self - other)
-    
+
     @classmethod
     def sub_vectors(self, first, second):
         return first - second
-    
+
     def __mul__(self, other):
         res = copy(self._null)
         if isinstance(other, BaseVector):
@@ -98,14 +98,14 @@ class BaseVector(list):
             for i in self._indeces:
                 res[i] = self[i] * float(other)
         return self.__class__(res)
-    
+
     def multiply(self, other):
         self.set_vector(self * other)
-        
+
     @classmethod
     def multiply_vectors(self, first, second):
         return first * second
-    
+
     def __div__(self, other):
         res = copy(self._null)
         if isinstance(other, BaseVector):
@@ -115,14 +115,14 @@ class BaseVector(list):
             for i in self._indeces:
                 res[i] = self[i] / float(other)
         return self.__class__(res)
-    
+
     def divide(self, other):
         self.set_vector(self / other)
-    
+
     @classmethod
     def divide_vectors(self, first, second):
         return first / second
-    
+
     def min(self, v):
         for i in self._indeces: 
             if v[i] < self[i]:
@@ -132,7 +132,7 @@ class BaseVector(list):
         for i in self._indeces: 
             if v[i] > self[i]:
                 self[i] = v[i]
-                
+
     def clamp(self, vmin, vmax):
         """ This function assumes min < max, if this assumption isn't true it will not operate correctly """
         for i in self._indeces:
@@ -140,11 +140,19 @@ class BaseVector(list):
                 self[i] = vmin[i]
             elif self[i] > vmax[i]:
                 self[i] = vmax[i]
-    
+
     def negate(self):
         self.set_vector(self * -1)
-                
-        
+
+    def dot(self, v):
+        dot = 0
+        for i in self._indeces:
+            dot += v[i]*self[i]
+        return dot
+
+    def length(self):
+        pass
+
     """
     x, y, z, w
         
