@@ -99,6 +99,12 @@ class Vector3Test(unittest.TestCase):
         angle = v1.angle(v2)
         self.assertEqual(math.degrees(angle), 180.0)
 
+    def test_distance(self):
+        v1 = Vector3(2, 1, 6)
+        v2 = Vector3(2, 5, 6)
+
+        self.assertEqual(v1.distance(v2), 4)
+
 
 if __name__ == '__main__':
     unittest.main()

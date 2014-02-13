@@ -188,6 +188,18 @@ class BaseVector(list):
 
         return math.acos(self.clamp_scalar(theta, -1, 1))
 
+    angle_to = angle  # alias for three.js back capability
+
+    def distance(self, v):
+        d = self - v
+        return d.length()
+
+    distance_to = distance
+
+    def distance_to_squared(self, v):
+        d = self - v
+        return d.length_sq()
+
     """
     normalize
     
