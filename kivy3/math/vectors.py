@@ -33,11 +33,11 @@ class BaseVector(list):
     """
         BaseVector is actually 4D vector for optimization
     """
-    
-    _d = 4 # dimension size
+
+    _d = 4  # dimension size
     _indeces = [0, 1, 2, 3]
     _null = [0, 0, 0, 0]
-    
+
     def __init__(self, *largs):
         if len(largs) == 1:
             if len(largs[0]) == self._d:
@@ -49,14 +49,14 @@ class BaseVector(list):
                 super(BaseVector, self).__init__(largs)
             else:
                 raise Exception('Invalid vector')
-            
+
     def set_vector(self, v):
         for i in self._indeces:
             self[i] = v[i]
-            
+
     def __add__(self, other):
         res = copy(self._null)
-        
+
         if isinstance(other, BaseVector):
             for i in self._indeces:
                 res[i] = self[i] + other[i]
@@ -64,10 +64,10 @@ class BaseVector(list):
             for i in self._indeces:
                 res[i] = self[i] + other
         return self.__class__(res)
-    
+
     def add(self, other):
         self.set_vector(self + other)
-    
+
     @classmethod
     def add_vectors(cls, first, second):
         return first + second
@@ -134,7 +134,9 @@ class BaseVector(list):
                 self[i] = v[i]
 
     def clamp(self, vmin, vmax):
-        """ This function assumes min < max, if this assumption isn't true it will not operate correctly """
+        """ This function assumes min < max, if this assumption isn't true
+            it will not operate correctly
+        """
         for i in self._indeces:
             if self[i] < vmin[i]:
                 self[i] = vmin[i]
@@ -147,17 +149,46 @@ class BaseVector(list):
     def dot(self, v):
         dot = 0
         for i in self._indeces:
-            dot += v[i]*self[i]
+            dot += v[i] * self[i]
         return dot
 
+    def length_sq(self):
+        length_sq = 0
+        for i in self._indeces:
+            length_sq += self[i] * self[i]
+        return length_sq
+
     def length(self):
-        pass
+        return math.sqrt(self.length_sq())
+
+    def length_manhattan(self):
+        res = 0
+        for i in self._indeces:
+            res += math.fabs(self[i])
+        return res
+
+    def normalize(self):
+        return self / self.length()
+
+    def lerp(self, v, alpha):
+        for i in self._indeces:
+            self[i] += (v[i] - self[i]) * alpha
+
+        return self
+
+    def clamp_scalar(self, n, min, max):
+        if n < min:
+            return min
+        if n > max:
+            return max
+        return n
+
+    def angle(self, v):
+        theta = self.dot(v) / (self.length() * v.length())
+
+        return math.acos(self.clamp_scalar(theta, -1, 1))
 
     """
-    x, y, z, w
-        
-    length
-    
     normalize
     
     distance_to
@@ -175,6 +206,8 @@ class Vector3(BaseVector):
     _d = 3
     _indeces = [0, 1, 2]
     _null = [0, 0, 0]
+    
+    "cross is only vector3 specific function"
 
 
 class Vector2(BaseVector):
