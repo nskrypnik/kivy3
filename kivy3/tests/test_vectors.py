@@ -2,7 +2,7 @@
 import unittest
 import math
 
-from kivy3 import Vector3
+from kivy3 import Vector3, Vector4, Vector2 
 
 # good values for vector 3, 4, 12, 84
 
@@ -104,6 +104,49 @@ class Vector3Test(unittest.TestCase):
         v2 = Vector3(2, 5, 6)
 
         self.assertEqual(v1.distance(v2), 4)
+
+    def test_attributes(self):
+        v = Vector3(0, 0, 0)
+        v.x = 4
+        self.assertEqual(v[0], v.x)
+        self.assertEqual(v[0], 4)
+
+        v.z = 6
+        self.assertEqual(v[2], v.z)
+        self.assertEqual(v[2], 6)
+
+        try:
+            t = v.v
+            assert False, "executing of this string is error"
+        except AttributeError:
+            pass
+
+
+class Vector2Test(unittest.TestCase):
+
+    def test_create(self):
+        v = Vector2(1, 2)
+        try:
+            v = Vector2(1, 2, 3)
+            assert False, "This should not be normally reached"
+        except:
+            pass # test is passed normally
+
+    def test_attrbutes(self):
+        v = Vector2(0, 0)
+        v.x = 4
+        self.assertEqual(v[0], v.x)
+        self.assertEqual(v[0], 4)
+
+        v.y = 7
+        self.assertEqual(v[1], v.y)
+        self.assertEqual(v[1], 7)
+
+        try:
+            t = v.z
+            assert False, "executing of this string is error"
+        except AttributeError:
+            pass
 
 
 if __name__ == '__main__':

@@ -37,6 +37,7 @@ class BaseVector(list):
     _d = 4  # dimension size
     _indeces = [0, 1, 2, 3]
     _null = [0, 0, 0, 0]
+    _coords = {'x': 0, 'y': 1, 'z': 2, 'v': 3}
 
     def __init__(self, *largs):
         if len(largs) == 1:
@@ -200,14 +201,16 @@ class BaseVector(list):
         d = self - v
         return d.length_sq()
 
-    """
-    normalize
-    
-    distance_to
-    
-    
-    
-    """
+    def __getattr__(self, k):
+        if k in self._coords:
+            return self[self._coords[k]]
+        else:
+            raise AttributeError
+
+    def __setattr__(self, k, v):
+        if k in self._coords:
+            if type(v) == int:
+                self[self._coords[k]] = v
 
 
 class Vector4(BaseVector):
@@ -218,7 +221,8 @@ class Vector3(BaseVector):
     _d = 3
     _indeces = [0, 1, 2]
     _null = [0, 0, 0]
-    
+    _coords = {'x': 0, 'y': 1, 'z': 2}
+
     "cross is only vector3 specific function"
 
 
@@ -226,3 +230,5 @@ class Vector2(BaseVector):
     _d = 2
     _indeces = [0, 1]
     _null = [0, 0]
+    _coords = {'x': 0, 'y': 1}
+
