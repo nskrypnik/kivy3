@@ -87,7 +87,7 @@ class BaseVector(list):
         self.set_vector(self - other)
 
     @classmethod
-    def sub_vectors(self, first, second):
+    def sub_vectors(cls, first, second):
         return first - second
 
     def __mul__(self, other):
@@ -104,7 +104,7 @@ class BaseVector(list):
         self.set_vector(self * other)
 
     @classmethod
-    def multiply_vectors(self, first, second):
+    def multiply_vectors(cls, first, second):
         return first * second
 
     def __div__(self, other):
@@ -121,7 +121,7 @@ class BaseVector(list):
         self.set_vector(self / other)
 
     @classmethod
-    def divide_vectors(self, first, second):
+    def divide_vectors(cls, first, second):
         return first / second
 
     def min(self, v):
@@ -223,9 +223,18 @@ class Vector3(BaseVector):
     _null = [0, 0, 0]
     _coords = {'x': 0, 'y': 1, 'z': 2}
 
-    "cross is only vector3 specific function"
+    def cross(self, v):
+        t = copy(self)
 
+        self[0] = t[1] * v[2] - t[2] * v[1]
+        self[1] = t[2] * v[0] - t[0] * v[2]
+        self[2] = t[0] * v[1] - t[1] * v[0]
 
+    @classmethod
+    def cross_vectors(cls):
+        pass
+
+n 
 class Vector2(BaseVector):
     _d = 2
     _indeces = [0, 1]

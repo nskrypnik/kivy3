@@ -34,28 +34,45 @@ camera object in the 3D space
 __all__ = ('Camera', )
 
 from kivy.event import EventDispatcher
-from kivy.properties import NumericProperty, ListProperty, ObjectProperty 
+from kivy.properties import NumericProperty, ListProperty, ObjectProperty
+from .math.vectors import Vector3
 
 
 class Camera(EventDispatcher):
-    
-    position = ObjectProperty([0, 0, 0])
+
+    position = ObjectProperty(Vector3(0, 0, 0))
     scale = NumericProperty(1.0)
-    up = ObjectProperty([0, 0, 0])
-    
-    def __init__(self, scene=None):
+    up = ObjectProperty(Vector3(0, 0, 0))
+
+    def __init__(self):
         super(Camera, self).__init__()
-        self.scene = scene
-    
+
     def on_position(self, instance, pos):
         """ Camera position was changed """
-        
-        
+
     def on_scale(self, instance, scale):
         """ Handler for change scale parameter event """
 
+    def look_at(self):
+        pass
+
+
+class OrthographicCamera():
+
+    pass
+
 
 class PerspectiveCamera(Camera):
-    pass
-    
-    
+
+    def __init__(self, fov, aspect, near, far):
+
+        super(PerspectiveCamera, self).__init__()
+        self.fov = fov
+        self.aspect = aspect
+        self.near = near
+        self.far = far
+
+        self.update_projection_matrix()
+
+    def update_projection_matrix(self):
+        pass
