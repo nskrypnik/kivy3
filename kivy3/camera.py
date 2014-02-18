@@ -33,8 +33,11 @@ camera object in the 3D space
 
 __all__ = ('Camera', )
 
+import math
+
 from kivy.event import EventDispatcher
 from kivy.properties import NumericProperty, ListProperty, ObjectProperty
+from kivy.graphics.transformation import Matrix
 from .math.vectors import Vector3
 
 
@@ -71,8 +74,16 @@ class PerspectiveCamera(Camera):
         self.aspect = aspect
         self.near = near
         self.far = far
+        self.projection_matrix = Matrix()
 
         self.update_projection_matrix()
 
     def update_projection_matrix(self):
-        pass
+        top = math.tan(math.degrees(self.fov * 0.5)) * self.near
+        bottom = -top
+        left = self.aspect * bottom
+        right = self.aspect * top
+
+        self.projection_matrix = Matrix().view_clip(left, right, bottom,
+                                        top, self.near, self.far, 1)
+
