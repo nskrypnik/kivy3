@@ -43,7 +43,7 @@ class Renderer(Fbo):
 
         self.cb_before = Callback(self.setup_gl_context)
         self.push_matrix = PushMatrix()
-        self.update_matrix = UpdateNormalMatrix() 
+        self.update_matrix = UpdateNormalMatrix()
         self.pop_matrix = PopMatrix()
         self.cb_after = Callback(self.reset_gl_context)
 
