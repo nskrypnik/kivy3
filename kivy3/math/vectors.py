@@ -50,6 +50,10 @@ class BaseVector(list):
                 super(BaseVector, self).__init__(largs)
             else:
                 raise Exception('Invalid vector')
+        self._change_cb = None
+
+    def set_change_cb(self, cb):
+        self._change_cb = cb
 
     def set_vector(self, v):
         for i in self._indeces:
@@ -125,12 +129,12 @@ class BaseVector(list):
         return first / second
 
     def min(self, v):
-        for i in self._indeces: 
+        for i in self._indeces:
             if v[i] < self[i]:
                 self[i] = v[i]
 
     def max(self, v):
-        for i in self._indeces: 
+        for i in self._indeces:
             if v[i] > self[i]:
                 self[i] = v[i]
 
@@ -211,6 +215,9 @@ class BaseVector(list):
         if k in self._coords:
             if type(v) == int:
                 self[self._coords[k]] = v
+                if self._change_cb:
+                    self._change_cb(k, v)
+        super(BaseVector, self).__setattr__(k, v)
 
 
 class Vector4(BaseVector):
@@ -234,10 +241,9 @@ class Vector3(BaseVector):
     def cross_vectors(cls):
         pass
 
-n 
+
 class Vector2(BaseVector):
     _d = 2
     _indeces = [0, 1]
     _null = [0, 0]
     _coords = {'x': 0, 'y': 1}
-

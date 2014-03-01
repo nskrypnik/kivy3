@@ -27,56 +27,80 @@ Object3D class
 =============
 
 
+
 """
 
-from kivy.properties import NumericProperty, ListProperty
-from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, \
-                          Mesh
+from kivy.properties import NumericProperty, ListProperty, ObjectProperty, AliasProperty
+from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, Mesh
 from kivy.event import EventDispatcher
 
+from kivy3.math.vectors import Vector3
+
+
 class Object3D(EventDispatcher):
-    
-    pos = ListProperty([0, 0, 0])
-    angle_x = NumericProperty(0.0)
-    angle_y = NumericProperty(0.0)
-    angle_z = NumericProperty(0.0)
-    scale = NumericProperty(1.0)
-    
+    """Base class for all 3D objects in rendered
+    3D world.
+    """
+
+    scale = ObjectProperty(Vector3(0, 0, 0))
+
     def __init__(self, **kw):
-        
+
         super(Object3D, self).__init__(**kw)
         self.name = kw.pop('name', '')
-        self._pop_matrix = PopMatrix()
-        self._push_matrix = PushMatrix()
-        self._translate = Translate(*self.pos)        
-        self._scale = Scale(self.scale)
-        self._rotate_x = Rotate(self.angle_x, 1, 0, 0)
-        self._rotate_y = Rotate(self.angle_y, 0, 1, 0)
-        self._rotate_z = Rotate(self.angle_y, 0, 0, 1)
-        
+        self.children = []
+        self.parent = None
+
+        self._position = Vector3(0, 0, 0)
+        self._position.set_change_cb(self.on_pos_changed)
+        #self._pop_matrix = PopMatrix()
+        #self._push_matrix = PushMatrix()
+        #self._translate = Translate(*self.pos)
+        #self._scale = Scale(self.scale)
+        #self._rotate_x = Rotate(self.angle_x, 1, 0, 0)
+        #self._rotate_y = Rotate(self.angle_y, 0, 1, 0)
+        #self._rotate_z = Rotate(self.angle_y, 0, 0, 1)
+
         mesh_data = kw.pop('mesh', None)
         if mesh_data:
             self.set_mesh(mesh_data)
         else:
             self.mesh = None
-        
+
         self._instructions = None
-        
-    def on_pos(self, inst, val):
-        self._translate.xyz = val
-    
+
+    def add(self, obj):
+        self.children.append(obj)
+        obj.parent = self
+
+    def _set_position(self, val):
+        if isinstance(val, Vector3):
+            self._position = val
+        else:
+            self._position = Vector3(val)
+        self._position.set_change_cb(self.on_pos_changed)
+
+    def _get_position(self):
+        return self._position
+
+    position = AliasProperty(_get_position, _set_position)
+    pos = position  # just shortcut
+
+    def on_pos_changed(self, coord, v):
+        " Some coordinate was changed "
+
     def on_angle_x(self, inst, val):
         self._rotate_x.angle = val
-    
+
     def on_angle_y(self, inst, val):
         self._rotate_y.angle = val
 
     def on_angle_z(self, inst, val):
         self._rotate_z.angle = val
-    
+
     def on_scale(self, val):
         self._scale.xyz = (val, val, val)
-                
+
     def set_mesh(self, mesh):
         if isinstance(mesh, Mesh):
             self.mesh = mesh
@@ -89,7 +113,8 @@ class Object3D(EventDispatcher):
                 mode='triangles',
                 #texture=texture,
             )
-    
+
+
     def as_instructions(self):
         """ Get instructions set for renderer """
         if not self._instructions:
