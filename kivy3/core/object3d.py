@@ -26,8 +26,6 @@ THE SOFTWARE.
 Object3D class
 =============
 
-
-
 """
 
 from kivy.properties import NumericProperty, ListProperty, ObjectProperty, AliasProperty
