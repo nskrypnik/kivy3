@@ -32,6 +32,7 @@ Object3D class
 
 from kivy.properties import NumericProperty, ListProperty, ObjectProperty, AliasProperty
 from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, Mesh
+from kivy.graphics.instructions import InstructionGroup
 from kivy.event import EventDispatcher
 
 from kivy3.math.vectors import Vector3
@@ -48,7 +49,7 @@ class Object3D(EventDispatcher):
 
         super(Object3D, self).__init__(**kw)
         self.name = kw.pop('name', '')
-        self.children = []
+        self.children = list()
         self.parent = None
 
         self._position = Vector3(0, 0, 0)
@@ -67,7 +68,7 @@ class Object3D(EventDispatcher):
                         "y": Rotate(self._rotate[2], 0, 0, 1)
                         }
 
-        self._instructions = None
+        self._instructions = InstructionGroup()
 
     def add(self, obj):
         self.children.append(obj)
@@ -112,14 +113,17 @@ class Object3D(EventDispatcher):
 
     def as_instructions(self):
         """ Get instructions set for renderer """
-        if not self._instructions:
-            self._instructions = [self._push_matrix, self._translate,
-                                  self.scale]
+        if not self._instructions.children:
+            self._instructions.add(self._push_matrix)
+            self._instructions.add(self._translate)
+            self._instructions.add(self.scale)
             for rot in self._rotors.itervalues():
-                self._instructions.appned(rot)
-            self._instructions.extend(self.custom_instructions())
-            self._instructions.extend(self.get_children_instructions())
-            self._instructions.append(self._push_matrix)
+                self._instructions.add(rot)
+            for instr in self.custom_instructions():
+                self._instructions.add(instr)
+            for child in self.get_children_instructions():
+                self._instructions.add(child)
+            self._instructions.add(self._push_matrix)
         return self._instructions
 
     def custom_instructions(self):
@@ -129,8 +133,6 @@ class Object3D(EventDispatcher):
         return []
 
     def get_children_instructions(self):
-        chilren_instructions = []
         for child in self.children:
-            chilren_instructions.extend(child.as_instructions())
-        return chilren_instructions
+            yield child.as_instructions()
 
