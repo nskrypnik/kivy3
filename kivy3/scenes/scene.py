@@ -34,11 +34,11 @@ class Scene(Object3D):
         if not self._instructions.children:
             super(Scene, self).as_instructions()
             self._instructions.insert(0, Callback(self.setup_gl_context))
-            self._nstructions.add(Callback(self.reset_gl_context))
+            self._instructions.add(Callback(self.reset_gl_context))
         return self._instructions
 
     def custom_instructions(self):
-        return [UpdateNormalMatrix(), ]
+        yield UpdateNormalMatrix()
 
     def setup_gl_context(self, *args):
         #clear_buffer

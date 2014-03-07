@@ -23,16 +23,47 @@ THE SOFTWARE.
 """
 
 from kivy.graphics import Mesh as KivyMesh
+from kivy3 import Vector3
 from kivy3.core.object3d import Object3D
+
+DEFAULT_VERTEX_FORMAT = [('v_pos', 3, 'float'),
+            ('v_normal', 3, 'float'),
+            ('v_tc0', 2, 'float')]
 
 
 class Mesh(Object3D):
 
-    def __init__(self, geometry, material):
+    def __init__(self, geometry, material, **kw):
         super(Mesh, self).__init__()
         self.geometry = geometry
         self.material = material
+        self.vertex_format = kw.pop("vertex_format", DEFAULT_VERTEX_FORMAT)
         self.create_mesh()
 
     def create_mesh(self):
-        pass
+        """ Create real mesh object from the geometry and material """
+        vertices = []
+        indices = []
+        idx = 0
+        for face in self.geometry.faces:
+            for i, k in enumerate(['a', 'b', 'c']):
+                vertex = getattr(face, k)
+                vertices.extend(vertex)
+                try:
+                    normal = face.vertex_normals
+                except IndexError:
+                    normal = Vector3([0, 0, 0])
+                vertices.extend(normal)
+                # while don't use texture coordinates
+                vertices.extend([0, 0])
+                indices.append(idx)
+                idx += 1
+        self._mesh = KivyMesh(vertices=vertices,
+                              indices=indices,
+                              fmt=self.vertex_format,
+                              mode='triangles',
+                              )
+
+    def custom_instructions(self):
+        yield self.material
+        yield self._mesh
