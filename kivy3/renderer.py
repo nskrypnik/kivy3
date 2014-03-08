@@ -24,12 +24,17 @@ THE SOFTWARE.
 """
 
 from kivy.uix.widget import Widget
+from kivy.clocl import Clock
 from kivy.graphics import Rectangle
 from kivy.graphics.fbo import Fbo
 from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
 from kivy.graphics import Callback, PushMatrix, PopMatrix, \
                           Rectangle, Canvas, UpdateNormalMatrix
+
+
+class RendererError(Exception):
+    pass
 
 
 class Renderer(Widget):
@@ -61,13 +66,23 @@ class Renderer(Widget):
         glDisable(GL_DEPTH_TEST)
 
     def render(self, scene, camera):
-        pass
+        self.scene = scene
+        self.camera = camera
+
+        Clock.schedule_once(self._update_projection_matrix, -1)
 
     def on_size(self, instance, value):
         self.fbo.size = value
         self.viewport.texture = self.renderer.texture
         self.viewport.size = value
-        self.fbo.update_glsl()
+        #self.fbo.update_glsl()
 
     def on_texture(self, instance, value):
         self.viewport.texture = value
+
+    def _update_matrices(self, dt):
+        if self.camera:
+            self.fbo['projection_mat'] = self.camera.projection_matrix
+            self.fbo['modelview_mat'] = self.camera.modelview_matrix
+        else:
+            raise RendererError("Camera is not defined for renderer")

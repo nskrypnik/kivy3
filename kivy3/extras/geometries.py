@@ -1,4 +1,3 @@
-
 """
 The MIT License (MIT)
 
@@ -23,10 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-from kivy.graphics import Callback, UpdateNormalMatrix
-from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
-from kivy3 import Object3D
+from kivy3.core.geometry import Geometry
 
 
-class Scene(Object3D):
-    """ Scene object """
+class BoxGeometry(Geometry):
+
+    def __init__(self, width, height, depth, **kw):
+        name = kw.pop('name', '')
+        super(BoxGeometry, self).__init__(name)
+        self.width_segment = kw.pop('width_segment', 1)
+        self.height_segment = kw.pop('height_segment', 1)
+        self.depth_segment = kw.pop('depth_segment', 1)

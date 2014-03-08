@@ -75,6 +75,7 @@ class PerspectiveCamera(Camera):
         self.near = near
         self.far = far
         self.projection_matrix = Matrix()
+        self.modelview_matrix = Matrix()
 
         self.update_projection_matrix()
 
