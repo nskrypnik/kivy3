@@ -4,6 +4,7 @@
 #endif
 
 attribute vec3  v_pos;
+attribute vec3  v_normal;
 attribute vec4  v_color;
 attribute vec2  v_tc0;
 

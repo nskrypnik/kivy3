@@ -80,7 +80,7 @@ class PerspectiveCamera(Camera):
         self.update_projection_matrix()
 
     def update_projection_matrix(self):
-        top = math.tan(math.degrees(self.fov * 0.5)) * self.near
+        top = math.tan(math.radians(self.fov * 0.5)) * self.near
         bottom = -top
         left = self.aspect * bottom
         right = self.aspect * top

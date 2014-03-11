@@ -22,10 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+from kivy3 import Vector3
 from kivy3.core.geometry import Geometry
+from kivy3.core.face3 import Face3
 
 
 class BoxGeometry(Geometry):
+
+    _cube_vertices = [(-1, 1, -1), (1, 1, -1),
+                      (1, -1, -1), (-1, -1, -1),
+                      (-1, 1, 1), (1, 1, 1),
+                      (1, -1, 1), (-1, -1, 1),
+                      ]
+
+    _cube_faces = [(0, 1, 2), (0, 2, 3), (3, 2, 6),
+                   (3, 6, 7), (7, 6, 5), (7, 5, 4),
+                   (4, 5, 1), (4, 1, 0), (4, 0, 3),
+                   (7, 4, 3), (5, 1, 2), (6, 5, 2)
+                   ]
 
     def __init__(self, width, height, depth, **kw):
         name = kw.pop('name', '')
@@ -33,3 +47,20 @@ class BoxGeometry(Geometry):
         self.width_segment = kw.pop('width_segment', 1)
         self.height_segment = kw.pop('height_segment', 1)
         self.depth_segment = kw.pop('depth_segment', 1)
+
+        self.w = width
+        self.h = height
+        self.d = depth
+
+        self._build_box()
+
+    def _build_box(self):
+
+        for v in self._cube_vertices:
+            v = Vector3(0.5 * v[0] * self.w,
+                        0.5 * v[1] * self.h,
+                        0.5 * v[2] * self.d)
+            self.vertices.append(v)
+
+        for f in self._cube_faces:
+            self.faces.append(Face3(*f))

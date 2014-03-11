@@ -23,14 +23,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+import os
+import kivy3
+
+
 from kivy.uix.widget import Widget
-from kivy.clocl import Clock
-from kivy.graphics import Rectangle
+from kivy.clock import Clock
 from kivy.graphics.fbo import Fbo
 from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
 from kivy.graphics import Callback, PushMatrix, PopMatrix, \
                           Rectangle, Canvas, UpdateNormalMatrix
+
+
+kivy3_path = os.path.abspath(os.path.dirname(kivy3.__file__))
 
 
 class RendererError(Exception):
@@ -39,28 +45,36 @@ class RendererError(Exception):
 
 class Renderer(Widget):
 
-    def __init__(self):
+    def __init__(self, **kw):
+        self.shader_file = kw.pop("shader_file", None)
         self.canvas = Canvas()
+        super(Renderer, self).__init__(**kw)
+
         with self.canvas:
             self._viewport = Rectangle(size=self.size, pos=self.pos)
+            self.fbo = Fbo(size=self.size,
+                           with_depthbuffer=True, compute_normal_mat=True)
+        self._config_fbo()
+        self.texture = self.fbo.texture
         self.camera = None
         self.scene = None
-        self._create_fbo()
 
-    def _create_fbo(self):
-        self.fbo = Fbo(with_depthbuffer=True, compute_normal_mat=True)
+    def _config_fbo(self):
+        # set shader file here
+        self.fbo.shader.source = self.shader_file or \
+                                os.path.join(kivy3_path, "default.glsl")
         with self.fbo:
-            Callback(self._setup_gl_context())
+            Callback(self._setup_gl_context)
             PushMatrix()
             UpdateNormalMatrix()
             # instructions set for all instructions
             self._instructions = InstructionGroup()
             PopMatrix()
-            Callback(self._reset_gl_context())
+            Callback(self._reset_gl_context)
 
     def _setup_gl_context(self, *args):
         glEnable(GL_DEPTH_TEST)
-        self.clear_buffer()
+        self.fbo.clear_buffer()
 
     def _reset_gl_context(self, *args):
         glDisable(GL_DEPTH_TEST)
@@ -68,19 +82,19 @@ class Renderer(Widget):
     def render(self, scene, camera):
         self.scene = scene
         self.camera = camera
-
-        Clock.schedule_once(self._update_projection_matrix, -1)
+        self._instructions.add(scene.as_instructions())
+        Clock.schedule_once(self._update_matrices, -1)
 
     def on_size(self, instance, value):
         self.fbo.size = value
-        self.viewport.texture = self.renderer.texture
-        self.viewport.size = value
-        #self.fbo.update_glsl()
+        self._viewport.texture = self.fbo.texture
+        self._viewport.size = value
+        self._update_matrices()
 
     def on_texture(self, instance, value):
-        self.viewport.texture = value
+        self._viewport.texture = value
 
-    def _update_matrices(self, dt):
+    def _update_matrices(self, dt=None):
         if self.camera:
             self.fbo['projection_mat'] = self.camera.projection_matrix
             self.fbo['modelview_mat'] = self.camera.modelview_matrix

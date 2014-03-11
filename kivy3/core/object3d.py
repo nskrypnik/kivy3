@@ -28,7 +28,8 @@ Object3D class
 
 """
 
-from kivy.properties import NumericProperty, ListProperty, ObjectProperty, AliasProperty
+from kivy.properties import NumericProperty, ListProperty, ObjectProperty, \
+                            AliasProperty
 from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, Mesh
 from kivy.graphics.instructions import InstructionGroup
 from kivy.event import EventDispatcher
@@ -41,8 +42,6 @@ class Object3D(EventDispatcher):
     3D world.
     """
 
-    scale = ObjectProperty(Vector3(0, 0, 0))
-
     def __init__(self, **kw):
 
         super(Object3D, self).__init__(**kw)
@@ -50,6 +49,7 @@ class Object3D(EventDispatcher):
         self.children = list()
         self.parent = None
 
+        self.scale = Scale(1., 1., 1.)
         self._position = Vector3(0, 0, 0)
         self._rotation = Vector3(0, 0, 0)
         self._position.set_change_cb(self.on_pos_changed)
@@ -59,11 +59,10 @@ class Object3D(EventDispatcher):
         self._pop_matrix = PopMatrix()
         self._push_matrix = PushMatrix()
         self._translate = Translate(*self.pos)
-        self._scale = Scale(self.scale)
         self._rotors = {
-                        "x": Rotate(self._rotate[0], 1, 0, 0),
-                        "y": Rotate(self._rotate[1], 0, 1, 0),
-                        "y": Rotate(self._rotate[2], 0, 0, 1)
+                        "x": Rotate(self._rotation.x, 1, 0, 0),
+                        "y": Rotate(self._rotation.y, 0, 1, 0),
+                        "y": Rotate(self._rotation.z, 0, 0, 1),
                         }
 
         self._instructions = InstructionGroup()
@@ -105,9 +104,6 @@ class Object3D(EventDispatcher):
 
     def on_angle_change(self, axis, angle):
         self._rotor[axis].angle = angle
-
-    def on_scale(self, val):
-        self._scale.xyz = (val, val, val)
 
     def as_instructions(self):
         """ Get instructions set for renderer """

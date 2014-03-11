@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 from kivy.graphics import Callback, UpdateNormalMatrix
 from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
-from kivy3 import Object3D
+from kivy3.core.object3d import Object3D
 
 
 class Scene(Object3D):

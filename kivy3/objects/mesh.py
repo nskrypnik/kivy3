@@ -47,7 +47,8 @@ class Mesh(Object3D):
         idx = 0
         for face in self.geometry.faces:
             for i, k in enumerate(['a', 'b', 'c']):
-                vertex = getattr(face, k)
+                vertex_index = getattr(face, k)
+                vertex = self.geometry.vertices[vertex_index]
                 vertices.extend(vertex)
                 try:
                     normal = face.vertex_normals
