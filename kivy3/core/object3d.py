@@ -68,7 +68,11 @@ class Object3D(EventDispatcher):
 
         self._instructions = InstructionGroup()
 
-    def add(self, obj):
+    def add(self, *objs):
+        for obj in objs:
+            self._add_child(obj)
+
+    def _add_child(self, obj):
         self.children.append(obj)
         obj.parent = self
 
