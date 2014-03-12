@@ -66,7 +66,6 @@ class Renderer(Widget):
         with self.fbo:
             Callback(self._setup_gl_context)
             PushMatrix()
-            UpdateNormalMatrix()
             # instructions set for all instructions
             self._instructions = InstructionGroup()
             PopMatrix()

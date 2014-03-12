@@ -34,7 +34,7 @@ DEFAULT_VERTEX_FORMAT = [('v_pos', 3, 'float'),
 class Mesh(Object3D):
 
     def __init__(self, geometry, material, **kw):
-        super(Mesh, self).__init__()
+        super(Mesh, self).__init__(**kw)
         self.geometry = geometry
         self.material = material
         self.vertex_format = kw.pop("vertex_format", DEFAULT_VERTEX_FORMAT)
@@ -51,7 +51,7 @@ class Mesh(Object3D):
                 vertex = self.geometry.vertices[vertex_index]
                 vertices.extend(vertex)
                 try:
-                    normal = face.vertex_normals
+                    normal = face.vertex_normals[i]
                 except IndexError:
                     normal = Vector3([0, 0, 0])
                 vertices.extend(normal)

@@ -27,7 +27,11 @@ from kivy.graphics import ChangeState
 # Map for material attributes to shader
 # uniform variables
 MATERIAL_TO_SHADER_MAP = {
-                          "color": "Kd"
+                          "color": "Ka",
+                          "transparency": "Tr",
+                          "diffuse": "Kd",
+                          "specular": "Ks",
+                          "shininess": "Ns",  # specular coefficient
                           }
 
 
@@ -39,9 +43,19 @@ class Material(ChangeState):
 
     def __init__(self, **kw):
         super(Material, self).__init__()
+        kw.setdefault("transparency", 1.)
+        kw.setdefault("color", (1., 1., 1.))
+        kw.setdefault("diffuse", (0., 0., 0.))
+        kw.setdefault("specular", (0., 0., 0.))
+        kw.setdefault("shininess", 1.)
+        for k, v in kw.iteritems():
+            setattr(self, k, v)
 
     def __setattr__(self, k, v):
-        uniform_var = MATERIAL_TO_SHADER_MAP[k]
-        self[uniform_var] = v
+        if k in MATERIAL_TO_SHADER_MAP:
+            uniform_var = MATERIAL_TO_SHADER_MAP[k]
+            self.changes[uniform_var] = v
+        else:
+            self.changes[k] = v
         super(Material, self).__setattr__(k, v)
 

@@ -19,6 +19,7 @@ class SceneApp(App):
         geometry = BoxGeometry(0.5, 0.5, 0.5)
         material = Material(color=(0., 1., 0.))
         self.cube = Mesh(geometry, material)
+        self.cube.pos.z = -2
         camera = PerspectiveCamera(75, 1, 1, 1000)
 
         scene.add(self.cube)
@@ -30,9 +31,9 @@ class SceneApp(App):
         return root
 
     def _rotate_cube(self, dt):
-        self.cube.rotation.x += 0.1
-        self.cube.rotation.y += 0.1
-        self.cube.rotation.z += 0.1
+        self.cube.rotation.x += 1
+        self.cube.rotation.y += 1
+        self.cube.rotation.z += 1
 
 
 if __name__ == '__main__':

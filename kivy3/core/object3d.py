@@ -30,7 +30,8 @@ Object3D class
 
 from kivy.properties import NumericProperty, ListProperty, ObjectProperty, \
                             AliasProperty
-from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, Mesh
+from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, \
+                          UpdateNormalMatrix
 from kivy.graphics.instructions import InstructionGroup
 from kivy.event import EventDispatcher
 
@@ -58,11 +59,11 @@ class Object3D(EventDispatcher):
         # general instructions
         self._pop_matrix = PopMatrix()
         self._push_matrix = PushMatrix()
-        self._translate = Translate(*self.pos)
+        self._translate = Translate(*self._position)
         self._rotors = {
                         "x": Rotate(self._rotation.x, 1, 0, 0),
                         "y": Rotate(self._rotation.y, 0, 1, 0),
-                        "y": Rotate(self._rotation.z, 0, 0, 1),
+                        "z": Rotate(self._rotation.z, 0, 0, 1),
                         }
 
         self._instructions = InstructionGroup()
@@ -90,9 +91,9 @@ class Object3D(EventDispatcher):
         else:
             self._rotation = Vector3(val)
         self._rotation.set_change_cb(self.on_angle_change)
-        self._rotor["x"].angle = self._rotation.x
-        self._rotor["y"].angle = self._rotation.y
-        self._rotor["z"].angle = self._rotation.z
+        self._rotors["x"].angle = self._rotation.x
+        self._rotors["y"].angle = self._rotation.y
+        self._rotors["z"].angle = self._rotation.z
 
     def _get_rotation(self):
         return self._rotation
@@ -100,10 +101,11 @@ class Object3D(EventDispatcher):
     rotation = AliasProperty(_get_rotation, _set_rotation)
 
     def on_pos_changed(self, coord, v):
-        " Some coordinate was changed "
+        """ Some coordinate was changed """
+        self._translate.xyz = self._position
 
     def on_angle_change(self, axis, angle):
-        self._rotor[axis].angle = angle
+        self._rotors[axis].angle = angle
 
     def as_instructions(self):
         """ Get instructions set for renderer """
@@ -113,11 +115,12 @@ class Object3D(EventDispatcher):
             self._instructions.add(self.scale)
             for rot in self._rotors.itervalues():
                 self._instructions.add(rot)
+            self._instructions.add(UpdateNormalMatrix())
             for instr in self.custom_instructions():
                 self._instructions.add(instr)
             for child in self.get_children_instructions():
                 self._instructions.add(child)
-            self._instructions.add(self._push_matrix)
+            self._instructions.add(self._pop_matrix)
         return self._instructions
 
     def custom_instructions(self):

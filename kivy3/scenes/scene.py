@@ -30,3 +30,9 @@ from kivy3.core.object3d import Object3D
 
 class Scene(Object3D):
     """ Scene object """
+
+    def as_instructions(self):
+        if not self._instructions.children:
+            for child in self.get_children_instructions():
+                self._instructions.add(child)
+        return self._instructions

@@ -213,7 +213,7 @@ class BaseVector(list):
 
     def __setattr__(self, k, v):
         if k in self._coords:
-            if type(v) == int:
+            if type(v) == int or type(v) == float:
                 self[self._coords[k]] = v
                 if self._change_cb:
                     self._change_cb(k, v)
