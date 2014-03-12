@@ -49,6 +49,7 @@ class Camera(EventDispatcher):
 
     def __init__(self):
         super(Camera, self).__init__()
+        self.renderer = None  # renderer camera is bound to
 
     def on_position(self, instance, pos):
         """ Camera position was changed """
@@ -59,6 +60,10 @@ class Camera(EventDispatcher):
     def look_at(self):
         pass
 
+    def bind_to(self, renderer):
+        """ Bind this camera to renderer """
+        self.renderer = renderer
+
 
 class OrthographicCamera():
 
@@ -67,16 +72,22 @@ class OrthographicCamera():
 
 class PerspectiveCamera(Camera):
 
-    def __init__(self, fov, aspect, near, far):
+    aspect = NumericProperty()
 
-        super(PerspectiveCamera, self).__init__()
+    def __init__(self, fov, aspect, near, far, **kw):
+
+        super(PerspectiveCamera, self).__init__(**kw)
         self.fov = fov
         self.aspect = aspect
         self.near = near
         self.far = far
         self.projection_matrix = Matrix()
         self.modelview_matrix = Matrix()
+        self.update_projection_matrix()
 
+        self.bind(aspect=self._on_aspect)
+
+    def _on_aspect(self, inst, value):
         self.update_projection_matrix()
 
     def update_projection_matrix(self):
@@ -87,4 +98,6 @@ class PerspectiveCamera(Camera):
 
         self.projection_matrix = Matrix().view_clip(left, right, bottom,
                                         top, self.near, self.far, 1)
+        if self.renderer:
+            self.renderer._update_matrices()
 

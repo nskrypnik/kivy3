@@ -16,19 +16,26 @@ class SceneApp(App):
 
         self.renderer = Renderer()
         scene = Scene()
-        geometry = BoxGeometry(0.5, 0.5, 0.5)
-        material = Material(color=(0., 1., 0.))
+        geometry = BoxGeometry(1, 1, 1)
+        material = Material(color=(0., 1., 0.), diffuse=(0., 1., 0.),
+                            specular=(.35, .35, .35))
         self.cube = Mesh(geometry, material)
-        self.cube.pos.z = -2
-        camera = PerspectiveCamera(75, 1, 1, 1000)
+        self.cube.pos.z = -3
+        camera = PerspectiveCamera(75, 0.3, 1, 1000)
 
         scene.add(self.cube)
         self.renderer.render(scene, camera)
 
         root.add_widget(self.renderer)
         Clock.schedule_interval(self._rotate_cube, 1 / 20)
+        Clock.schedule_once(self._adjust_aspect, -1)
 
         return root
+
+    def _adjust_aspect(self, dt):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
     def _rotate_cube(self, dt):
         self.cube.rotation.x += 1
