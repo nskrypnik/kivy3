@@ -100,3 +100,6 @@ class Renderer(Widget):
             self.fbo['modelview_mat'] = self.camera.modelview_matrix
         else:
             raise RendererError("Camera is not defined for renderer")
+
+    def set_clear_color(self, color):
+        self.fbo.clear_color = color

@@ -15,6 +15,7 @@ class SceneApp(App):
         root = FloatLayout()
 
         self.renderer = Renderer()
+        self.renderer.set_clear_color((.2, .2, .2, 1.))
         scene = Scene()
         geometry = BoxGeometry(1, 1, 1)
         material = Material(color=(0., 1., 0.), diffuse=(0., 1., 0.),
