@@ -23,11 +23,11 @@ THE SOFTWARE.
 """
 
 """
-Camera class
+Camera module
 =============
 
-This is the implementation of Camera abstraction, which represents
-camera object in the 3D space
+In this module different camera classes are implemented. Concept is same as in
+THREE.js.
 """
 
 
@@ -42,6 +42,9 @@ from .math.vectors import Vector3
 
 
 class Camera(EventDispatcher):
+    """
+    Base camera class
+    """
 
     position = ObjectProperty(Vector3(0, 0, 0))
     scale = NumericProperty(1.0)
@@ -71,6 +74,9 @@ class OrthographicCamera():
 
 
 class PerspectiveCamera(Camera):
+    """
+    Implementation of the perspective camera.
+    """
 
     aspect = NumericProperty()
 

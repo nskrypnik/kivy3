@@ -23,6 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+"""
+Renderer class
+=============
+
+Unlike of THREE.js we may provide only one renderer which is the
+Kivy widget and uses Kivy canvas and FBO concept for drawing graphics.
+You may use this class as usual widget and place it wherever you need
+in your application
+"""
+
 import os
 import kivy3
 
