@@ -29,7 +29,7 @@ class SceneApp(App):
 
         root.add_widget(self.renderer)
         Clock.schedule_interval(self._rotate_cube, 1 / 20)
-        Clock.schedule_once(self._adjust_aspect, -1)
+        self.renderer.bind(size=self._adjust_aspect)
 
         return root
 

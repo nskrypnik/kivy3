@@ -57,32 +57,30 @@ class WaveObject(object):
             verts = f[0]
             norms = f[1]
             tcs = f[2]
-        """
-        for f in self.faces:
-            verts = f[0]
-            norms = f[1]
-            tcs = f[2]
-            for i in range(3):
+            face3 = Face3(0, 0, 0)
+            for i, e in enumerate(['a', 'b', 'c']):
                 #get normal components
                 n = (0.0, 0.0, 0.0)
                 if norms[i] != -1:
                     n = self.loader.normals[norms[i] - 1]
+                face3.vertex_normals.append(n)
 
                 #get texture coordinate components
                 t = (0.0, 0.0)
                 if tcs[i] != -1:
                     t = self.loader.texcoords[tcs[i] - 1]
+                # TODO: figure out with texcoords
 
                 #get vertex components
                 v = self.loader.vertices[verts[i] - 1]
+                if not v in geometry.vertices:
+                    geometry.vertices.append(v)
+                v_index = geometry.vertices.index(v)
+                setattr(face3, e, v_index)
+            geometry.faces.append(face3)
 
-                data = [v[0], v[1], v[2], n[0], n[1], n[2], t[0], 1 - t[1]]
-                mesh.vertices.extend(data)
+        mesh = Mesh(geometry, material)
 
-            tri = [idx, idx + 1, idx + 2]
-            mesh.indices.extend(tri)
-            idx += 3
-        """
         return mesh
 
 
@@ -91,7 +89,7 @@ class OBJLoader(Loader):
     def __init__(self):
         pass
 
-    def _load_meshes(self, filename, swapyz):
+    def _load_meshes(self):
 
         wvobj = WaveObject(self)
         self.vertices = []
@@ -148,7 +146,7 @@ class OBJLoader(Loader):
 
     def load(self, source, **kw):
         self.swapyz = kw.pop("swapyz", False)
-        super(OBJLoader, self).load(source, **kw)
+        return super(OBJLoader, self).load(source, **kw)
 
     def parse(self):
 

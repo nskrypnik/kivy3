@@ -22,8 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import os
-import kivy3
+
 from kivy.app import App
 from kivy3 import Scene, Renderer, PerspectiveCamera
 from kivy3.loaders import OBJLoader
@@ -35,24 +34,31 @@ class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        self.renderer = Renderer()
-
+        self.renderer = Renderer(shader_file="simple.glsl")
         scene = Scene()
         # load obj file
         loader = OBJLoader()
         obj = loader.load("monkey.obj")
+        self.monkey = obj.children[0]
+
         scene.add(*obj.children)
-        camera = PerspectiveCamera(90, 0.3, 1, 1000)
+        camera = PerspectiveCamera(15, 1, 1, 1000)
 
         self.renderer.render(scene, camera)
         root.add_widget(self.renderer)
-        Clock.schedule_interval(self._update_obj, 1./20)
+        Clock.schedule_interval(self._update_obj, 1. / 20)
+        self.renderer.bind(size=self._adjust_aspect)
         return root
 
     def _update_obj(self, dt):
-        obj = self.scene.children[0]
-        if obj.pos.z > -3:
-            obj.pos.z -= 0.1
+        obj = self.monkey
+        if obj.pos.z > -30:
+            obj.pos.z -= 0.5
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 if __name__ == '__main__':
