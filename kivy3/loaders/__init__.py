@@ -1,2 +1,2 @@
 
-from waveloader import WaveLoader
+from objloader import OBJLoader

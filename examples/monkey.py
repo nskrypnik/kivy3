@@ -25,33 +25,34 @@ THE SOFTWARE.
 import os
 import kivy3
 from kivy.app import App
-from kivy3 import Scene
-from kivy3.loaders import WaveLoader
+from kivy3 import Scene, Renderer, PerspectiveCamera
+from kivy3.loaders import OBJLoader
 from kivy.uix.floatlayout import FloatLayout
-from kivy.graphics import Translate
-from kivy.clock import Clock 
+from kivy.clock import Clock
+
 
 class MainApp(App):
-    
+
     def build(self):
         root = FloatLayout()
-        self.scene = Scene(shader_file="simple.glsl")
+        self.renderer = Renderer()
+
+        scene = Scene()
         # load obj file
-        loader = WaveLoader()
-        objects = loader.load("monkey.obj")
-        self.scene.add(*objects)
-        for obj in objects:
-            obj.pos = (0, 0, 1)
-        root.add_widget(self.scene)
+        loader = OBJLoader()
+        obj = loader.load("monkey.obj")
+        scene.add(*obj.children)
+        camera = PerspectiveCamera(90, 0.3, 1, 1000)
+
+        self.renderer.render(scene, camera)
+        root.add_widget(self.renderer)
         Clock.schedule_interval(self._update_obj, 1./20)
         return root
-    
+
     def _update_obj(self, dt):
-        obj = self.scene.objects[0]
-        xyz = obj.pos
-        if xyz[2] > -3:
-            xyz[2] -= 0.1
-            obj.pos = xyz
+        obj = self.scene.children[0]
+        if obj.pos.z > -3:
+            obj.pos.z -= 0.1
 
 
 if __name__ == '__main__':

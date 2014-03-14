@@ -1,7 +1,37 @@
+"""
+The MIT License (MIT)
+
+Copyright (c) 2013 Niko Skrypnik
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+"""
+
+"""
+Loaders for Wavefront format .obj files
+=============
+
+"""
 
 from .loader import Loader
-from .meshdata import MeshData
-from kivy3 import Object3D
+from kivy3 import Object3D, Mesh, Material
+from kivy3.core.geometry import Geometry
+from kivy3.core.face3 import Face3
 
 
 class WaveObject(object):
@@ -14,10 +44,20 @@ class WaveObject(object):
         self.faces = []
         self.loader = loader
 
-    def to_mesh_data(self, vertex_format=None):
+    def convert_to_mesh(self, vertex_format=None):
+        """Converts data gotten from the .obj definition
+        file and create Kivy3 Mesh object which may be used
+        for drawing object in the scene
+        """
 
-        mesh = MeshData(vertex_format=vertex_format)
+        geometry = Geometry()
+        material = Material()
         idx = 0
+        for f in self.faces:
+            verts = f[0]
+            norms = f[1]
+            tcs = f[2]
+        """
         for f in self.faces:
             verts = f[0]
             norms = f[1]
@@ -42,6 +82,7 @@ class WaveObject(object):
             tri = [idx, idx + 1, idx + 2]
             mesh.indices.extend(tri)
             idx += 3
+        """
         return mesh
 
 
@@ -105,25 +146,18 @@ class OBJLoader(Loader):
                 wvobj.faces.append((face, norms, texcoords))
         yield wvobj
 
-    def _convert_to_objects(self, wave_objects):
-        objects = []
-        for wvobj in wave_objects:
-            obj = Object3D(mesh=wvobj.to_mesh_data(), name=wvobj.name)
-            objects.append(obj)
-        return objects
-
     def load(self, source, **kw):
         self.swapyz = kw.pop("swapyz", False)
         super(OBJLoader, self).load(source, **kw)
 
     def parse(self):
 
-        wave_objects = []
+        obj = Object3D()
 
         for wvobj in self._load_meshes():
-            wave_objects.append(wvobj)
+            obj.add(wvobj.convert_to_mesh())
 
-        return self._convert_to_objects(wave_objects)
+        return obj
 
 
 def MTL(filename):
