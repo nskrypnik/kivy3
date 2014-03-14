@@ -33,7 +33,7 @@ class SceneApp(App):
 
         return root
 
-    def _adjust_aspect(self, dt):
+    def _adjust_aspect(self, inst, val):
         rsize = self.renderer.size
         aspect = rsize[0] / float(rsize[1])
         self.renderer.camera.aspect = aspect
