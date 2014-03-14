@@ -23,8 +23,8 @@ THE SOFTWARE.
 """
 
 """
-This example loads simple objects from .obj file and shows how
-to use custom shader file
+Same as example1 but with using default shader file and colorizing
+of the objects
 """
 
 import os
@@ -39,7 +39,7 @@ class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        self.renderer = Renderer(shader_file="simple.glsl")
+        self.renderer = Renderer()
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
         # load obj file
@@ -50,6 +50,18 @@ class MainApp(App):
         scene.add(*obj.children)
         for obj in scene.children:
             obj.pos.z = -20
+            obj.material.specular = .35, .35, .35
+
+        # set colors to 3d objects
+        scene.children[0].material.color = 0., .7, 0.  # green
+        scene.children[1].material.color = .7, 0., 0.  # red
+        scene.children[2].material.color = 0., 0., .7  # blue
+        scene.children[3].material.color = .7, .7, 0.  # yellow
+
+        scene.children[0].material.diffuse = 0., .7, 0.  # green
+        scene.children[1].material.diffuse = .7, 0., 0.  # red
+        scene.children[2].material.diffuse = 0., 0., .7  # blue
+        scene.children[3].material.diffuse = .7, .7, 0.  # yellow
 
         self.renderer.render(scene, camera)
         root.add_widget(self.renderer)
