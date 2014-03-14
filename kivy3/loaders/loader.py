@@ -29,6 +29,8 @@ Loader class
 Base loader class which should be used by all other loaders implementations
 """
 
+from kivy.clock import Clock
+
 
 class Loader(object):
 
@@ -36,37 +38,46 @@ class Loader(object):
         self._on_load_start = kw.pop("on_load_start", None)
         self._on_load_progress = kw.pop("on_load_progress", None)
         self._on_load_complete = kw.pop("on_load_complete", None)
+        self.source = None
 
-    @property
     def on_load_start(self):
-        return self._on_load_start
+        if callable(self._on_load_start):
+            self._on_load_start()
 
-    @on_load_start.setter
-    def set_on_load_start(self, v):
-        if callable(v):
-            self._on_load_start = v
-        else:
-            raise Exception("on_load_start should be callable")
-
-    @property
     def on_load_progress(self):
-        return self._on_load_progress
+        if callable(self._on_load_progress):
+            self._on_load_progress()
 
-    @on_load_progress.setter
-    def set_on_load_progress(self, v):
-        if callable(v):
-            self._on_load_progress = v
-        else:
-            raise Exception("on_load_progress should be callable")
-
-    @property
     def on_load_complete(self):
-        return self._on_load_complete
+        if callable(self._on_load_complete):
+            self._on_load_complete()
 
-    @on_load_progress.setter
-    def set_on_load_complete(self, v):
-        if callable(v):
-            self._on_load_complete = v
+    def __setattr__(self, k, v):
+        if k in ["on_load_start", "on_load_progress", "on_load_complete"]:
+            if not callable(v):
+                raise Exception("%s should be callable" % k)
+            setattr(self, "_%s" % k, v)
         else:
-            raise Exception("on_load_complete should be callable")
+            super(Loader, self).__setattr__(k, v)
 
+    def load(self, source, on_load=None, on_progress=None, on_error=None):
+        """This function loads objects from source. This function may work
+        in both synchronous or asynchronous way. To make it asynchronous
+        on_load callback function should be provided.
+        """
+        self.source = source
+
+        if not callable(on_load):
+            return self.parse()
+
+        def _async_load(dt):
+            obj = self.parse()
+            on_load(obj)
+
+        Clock.schedule_once(_async_load, 0)
+
+    def parse(self):
+        """ This should be overridden in subclasses to provide
+        parse of the source and return loaded from source object
+        """
+        pass

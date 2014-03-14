@@ -45,7 +45,7 @@ class WaveObject(object):
         return mesh
 
 
-class WaveLoader(Loader):
+class OBJLoader(Loader):
 
     def __init__(self):
         pass
@@ -58,7 +58,7 @@ class WaveLoader(Loader):
         self.texcoords = []
         faces_section = False
 
-        for line in open(filename, "r"):
+        for line in open(self.source, "r"):
             if line.startswith('#'):
                 continue
             if line.startswith('s'):
@@ -75,12 +75,12 @@ class WaveLoader(Loader):
                     yield wvobj
                     wvobj = WaveObject(self)
                 v = map(float, values[1:4])
-                if swapyz:
+                if self.swapyz:
                     v = v[0], v[2], v[1]
                 self.vertices.append(v)
             elif values[0] == 'vn':
                 v = map(float, values[1:4])
-                if swapyz:
+                if self.swapyz:
                     v = v[0], v[2], v[1]
                 self.normals.append(v)
             elif values[0] == 'vt':
@@ -112,11 +112,15 @@ class WaveLoader(Loader):
             objects.append(obj)
         return objects
 
-    def load(self, filename, swapyz=False):
+    def load(self, source, **kw):
+        self.swapyz = kw.pop("swapyz", False)
+        super(OBJLoader, self).load(source, **kw)
+
+    def parse(self):
 
         wave_objects = []
 
-        for wvobj in self._load_meshes(filename, swapyz):
+        for wvobj in self._load_meshes():
             wave_objects.append(wvobj)
 
         return self._convert_to_objects(wave_objects)
