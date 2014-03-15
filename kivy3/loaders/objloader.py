@@ -28,6 +28,7 @@ Loaders for Wavefront format .obj files
 
 """
 
+import os
 from .loader import Loader
 from kivy3 import Object3D, Mesh, Material
 from kivy3.core.geometry import Geometry
@@ -89,6 +90,21 @@ class OBJLoader(Loader):
     def __init__(self, **kw):
         super(OBJLoader, self).__init__(**kw)
         self.mtl_source = None  # source of MTL
+        self.mtl_contents = {}  # should be filled in load_mtl
+
+    def load_mtl(self):
+        for line in open(self.mtl_source, "r"):
+            if line.startswith('#'):
+                continue
+            values = line.split()
+            if not values:
+                continue
+            if values[0] == 'newmtl':
+                mtl = self.mtl_contents[values[1]] = {}
+                continue
+            elif mtl is None:
+                raise ValueError("mtl doesn't start with newmtl statement")
+            mtl[values[0]] = values[1:]
 
     def _load_meshes(self):
 
@@ -108,7 +124,12 @@ class OBJLoader(Loader):
                 continue
             if values[0] == 'o' or values[0] == 'g':
                 wvobj.name = values[1]
-            if values[0] == 'v':
+            elif values[0] == 'mtllib':
+                if not self.mtl_source:
+                    _obj_dir = os.path.abspath(os.path.dirname(self.source))
+                    self.mtl_source = os.path.join(_obj_dir, values[1])
+                    self.load_mtl()
+            elif values[0] == 'v':
                 if faces_section:
                     # here we yield new mesh object
                     faces_section = False
@@ -167,22 +188,6 @@ class OBJMTLLoader(OBJLoader):
 
     def load(self, source, mtl_source, **kw):
         self.mtl_source = mtl_source
+        self.load_mtl()
         super(OBJMTLLoader, self).load(source, **kw)
 
-
-def MTL(filename):
-    contents = {}
-    mtl = None
-    return
-    for line in open(filename, "r"):
-        if line.startswith('#'):
-            continue
-        values = line.split()
-        if not values:
-            continue
-        if values[0] == 'newmtl':
-            mtl = contents[values[1]] = {}
-        elif mtl is None:
-            raise ValueError("mtl file doesn't start with newmtl stmt")
-        mtl[values[0]] = values[1:]
-    return contents
