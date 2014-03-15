@@ -37,6 +37,7 @@ class Mesh(Object3D):
         super(Mesh, self).__init__(**kw)
         self.geometry = geometry
         self.material = material
+        self.mtl = self.material  # shortcut for material property
         self.vertex_format = kw.pop("vertex_format", DEFAULT_VERTEX_FORMAT)
         self.create_mesh()
 

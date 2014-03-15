@@ -93,6 +93,9 @@ class OBJLoader(Loader):
         self.mtl_contents = {}  # should be filled in load_mtl
 
     def load_mtl(self):
+        if not os.path.exists(self.mtl_source):
+            # skip loading material
+            return
         for line in open(self.mtl_source, "r"):
             if line.startswith('#'):
                 continue
