@@ -86,8 +86,9 @@ class WaveObject(object):
 
 class OBJLoader(Loader):
 
-    def __init__(self):
-        pass
+    def __init__(self, **kw):
+        super(OBJLoader, self).__init__(**kw)
+        self.mtl_source = None  # source of MTL
 
     def _load_meshes(self):
 
@@ -156,6 +157,17 @@ class OBJLoader(Loader):
             obj.add(wvobj.convert_to_mesh())
 
         return obj
+
+
+class OBJMTLLoader(OBJLoader):
+    """ This subclass of Wafefront format files loader
+    which allows to use custom MTL file, but not the one is
+    defined in .obj file
+    """
+
+    def load(self, source, mtl_source, **kw):
+        self.mtl_source = mtl_source
+        super(OBJMTLLoader, self).load(source, **kw)
 
 
 def MTL(filename):

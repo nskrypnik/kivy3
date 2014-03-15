@@ -56,6 +56,11 @@ class Camera(EventDispatcher):
 
     def on_position(self, instance, pos):
         """ Camera position was changed """
+        self.update()
+
+    def on_up(self, instance, up):
+        """ Camera up vector was changed """
+        self.update()
 
     def on_scale(self, instance, scale):
         """ Handler for change scale parameter event """
@@ -66,6 +71,15 @@ class Camera(EventDispatcher):
     def bind_to(self, renderer):
         """ Bind this camera to renderer """
         self.renderer = renderer
+
+    def update(self):
+        self.update_projection_matrix()
+        if self.renderer:
+            self.renderer._update_matrices()
+
+    def update_projection_matrix(self):
+        """ This function should be overridden in the subclasses
+        """
 
 
 class OrthographicCamera():
@@ -94,7 +108,7 @@ class PerspectiveCamera(Camera):
         self.bind(aspect=self._on_aspect)
 
     def _on_aspect(self, inst, value):
-        self.update_projection_matrix()
+        self.update()
 
     def update_projection_matrix(self):
         top = math.tan(math.radians(self.fov * 0.5)) * self.near
@@ -104,6 +118,4 @@ class PerspectiveCamera(Camera):
 
         self.projection_matrix = Matrix().view_clip(left, right, bottom,
                                         top, self.near, self.far, 1)
-        if self.renderer:
-            self.renderer._update_matrices()
 
