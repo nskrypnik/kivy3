@@ -1,2 +1,2 @@
 
-from objloader import OBJLoader
+from objloader import OBJLoader, OBJMTLLoader

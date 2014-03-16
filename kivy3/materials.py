@@ -47,7 +47,7 @@ class Material(ChangeState):
         kw.setdefault("color", (1., 1., 1.))
         kw.setdefault("diffuse", (0., 0., 0.))
         kw.setdefault("specular", (0., 0., 0.))
-        kw.setdefault("shininess", 1.)
+        kw.setdefault("shininess", 10.)
         for k, v in kw.iteritems():
             setattr(self, k, v)
 

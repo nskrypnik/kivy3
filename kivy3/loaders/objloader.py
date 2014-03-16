@@ -40,10 +40,16 @@ class WaveObject(object):
         normals, texcoords and faces
     """
 
+    _mtl_map = {"Ka": "color", "Kd": "diffuse", "Ks": "specular",
+                "Ns": "shininess", "Tr": "transparency",
+                "d": "transparency",
+                }
+
     def __init__(self, loader, name=''):
         self.name = name
         self.faces = []
         self.loader = loader
+        self.mtl_name = None
 
     def convert_to_mesh(self, vertex_format=None):
         """Converts data gotten from the .obj definition
@@ -54,6 +60,7 @@ class WaveObject(object):
         geometry = Geometry()
         material = Material()
         idx = 0
+        # create geometry for mesh
         for f in self.faces:
             verts = f[0]
             norms = f[1]
@@ -80,8 +87,21 @@ class WaveObject(object):
                 setattr(face3, e, v_index)
             geometry.faces.append(face3)
 
+        # apply material for object
+        if self.mtl_name in self.loader.mtl_contents:
+            raw_material = self.loader.mtl_contents[self.mtl_name]
+            for k, v in raw_material.iteritems():
+                _k = self._mtl_map.get(k, None)
+                if _k:
+                    if len(v) == 1:
+                        v = float(v[0])
+                        if k == 'Tr':
+                            v = 1. - v
+                        setattr(material, _k, v)
+                    else:
+                        v = map(lambda x: float(x), v)
+                        setattr(material, _k, v)
         mesh = Mesh(geometry, material)
-
         return mesh
 
 
@@ -132,6 +152,8 @@ class OBJLoader(Loader):
                     _obj_dir = os.path.abspath(os.path.dirname(self.source))
                     self.mtl_source = os.path.join(_obj_dir, values[1])
                     self.load_mtl()
+            elif values[0] == 'usemtl':
+                wvobj.mtl_name = values[1]
             elif values[0] == 'v':
                 if faces_section:
                     # here we yield new mesh object
@@ -192,5 +214,5 @@ class OBJMTLLoader(OBJLoader):
     def load(self, source, mtl_source, **kw):
         self.mtl_source = mtl_source
         self.load_mtl()
-        super(OBJMTLLoader, self).load(source, **kw)
+        return super(OBJMTLLoader, self).load(source, **kw)
 
