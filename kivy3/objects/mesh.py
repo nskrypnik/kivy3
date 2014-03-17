@@ -48,23 +48,27 @@ class Mesh(Object3D):
         idx = 0
         for face in self.geometry.faces:
             for i, k in enumerate(['a', 'b', 'c']):
-                vertex_index = getattr(face, k)
-                vertex = self.geometry.vertices[vertex_index]
+                v_idx = getattr(face, k)
+                vertex = self.geometry.vertices[v_idx]
                 vertices.extend(vertex)
                 try:
                     normal = face.vertex_normals[i]
                 except IndexError:
                     normal = Vector3([0, 0, 0])
                 vertices.extend(normal)
-                # while don't use texture coordinates
-                vertices.extend([0, 0])
+                try:
+                    tex_coords = self.geometry.face_vertex_uvs[0][v_idx]
+                    vertices.extend(tex_coords)
+                except IndexError:
+                    vertices.extend([0, 0])
                 indices.append(idx)
                 idx += 1
-        self._mesh = KivyMesh(vertices=vertices,
-                              indices=indices,
-                              fmt=self.vertex_format,
-                              mode='triangles',
-                              )
+        kw = {"vertices": vertices, "indices": indices,
+              "fmt": self.vertex_format, "mode": "triangles"
+              }
+        if self.material.map:
+            kw["texture"] = self.material.map
+        self._mesh = KivyMesh(**kw)
 
     def custom_instructions(self):
         yield self.material

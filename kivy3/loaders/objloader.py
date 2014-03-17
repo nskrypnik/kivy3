@@ -30,7 +30,8 @@ Loaders for Wavefront format .obj files
 
 import os
 from .loader import Loader
-from kivy3 import Object3D, Mesh, Material
+from kivy.core.image import Image
+from kivy3 import Object3D, Mesh, Material, Vector2
 from kivy3.core.geometry import Geometry
 from kivy3.core.face3 import Face3
 
@@ -42,7 +43,7 @@ class WaveObject(object):
 
     _mtl_map = {"Ka": "color", "Kd": "diffuse", "Ks": "specular",
                 "Ns": "shininess", "Tr": "transparency",
-                "d": "transparency",
+                "d": "transparency", "map_Kd": "map"
                 }
 
     def __init__(self, loader, name=''):
@@ -59,7 +60,7 @@ class WaveObject(object):
 
         geometry = Geometry()
         material = Material()
-        idx = 0
+        mtl_dirname = os.path.abspath(os.path.dirname(self.loader.mtl_source))
         # create geometry for mesh
         for f in self.faces:
             verts = f[0]
@@ -77,7 +78,7 @@ class WaveObject(object):
                 t = (0.0, 0.0)
                 if tcs[i] != -1:
                     t = self.loader.texcoords[tcs[i] - 1]
-                # TODO: figure out with texcoords
+                geometry.face_vertex_uvs[0].append(Vector2(t))
 
                 #get vertex components
                 v = self.loader.vertices[verts[i] - 1]
@@ -92,6 +93,11 @@ class WaveObject(object):
             raw_material = self.loader.mtl_contents[self.mtl_name]
             for k, v in raw_material.iteritems():
                 _k = self._mtl_map.get(k, None)
+                if k in ["map_Kd", ]:
+                    map_path = os.path.join(mtl_dirname, v[0])
+                    tex = Image(map_path).texture
+                    material.map = tex
+                    continue
                 if _k:
                     if len(v) == 1:
                         v = float(v[0])

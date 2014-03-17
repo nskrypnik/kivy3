@@ -103,6 +103,7 @@ class Object3D(EventDispatcher):
         return self._rotation
 
     rotation = AliasProperty(_get_rotation, _set_rotation)
+    rot = rotation
 
     def on_pos_changed(self, coord, v):
         """ Some coordinate was changed """

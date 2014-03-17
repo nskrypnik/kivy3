@@ -50,12 +50,14 @@ class Material(ChangeState):
         kw.setdefault("shininess", 10.)
         for k, v in kw.iteritems():
             setattr(self, k, v)
+        self.map = None
 
     def __setattr__(self, k, v):
         if k in MATERIAL_TO_SHADER_MAP:
             uniform_var = MATERIAL_TO_SHADER_MAP[k]
             self.changes[uniform_var] = v
         else:
-            self.changes[k] = v
+            if type(v) in [float, int, str, list]:
+                self.changes[k] = v
         super(Material, self).__setattr__(k, v)
 
