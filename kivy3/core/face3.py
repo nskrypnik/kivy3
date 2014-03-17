@@ -43,4 +43,3 @@ class Face3(object):
         self.c = c
         self.normal = normal or Vector3(0, 0, 0)  # face normal
         self.vertex_normals = []  # vertices normals
-

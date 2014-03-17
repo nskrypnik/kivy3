@@ -78,7 +78,7 @@ class WaveObject(object):
                 t = (0.0, 0.0)
                 if tcs[i] != -1:
                     t = self.loader.texcoords[tcs[i] - 1]
-                geometry.face_vertex_uvs[0].append(Vector2(t))
+                geometry.face_vertex_uvs[0].append(Vector2(t[0], 1. - t[1]))
 
                 #get vertex components
                 v = self.loader.vertices[verts[i] - 1]

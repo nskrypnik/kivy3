@@ -11,7 +11,7 @@ class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        self.renderer = Renderer()
+        self.renderer = Renderer(shader_file="simple.glsl")
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
         loader = OBJMTLLoader()
@@ -19,12 +19,7 @@ class MainApp(App):
 
         scene.add(*obj.children)
         for obj in scene.children:
-            obj.pos.z = -10.
-            obj.rotation.z = 90
-
-        #scene.children[0].material.color = .7, .7, .0
-        #scene.children[0].material.diffuse = .7, .7, .0
-        #scene.children[0].material.specular = .35, .35, .35
+            obj.pos.z = -4.
 
         self.renderer.render(scene, camera)
 
