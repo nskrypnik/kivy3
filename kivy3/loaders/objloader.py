@@ -74,18 +74,20 @@ class WaveObject(object):
                     n = self.loader.normals[norms[i] - 1]
                 face3.vertex_normals.append(n)
 
+                #get vertex components
+                v = self.loader.vertices[verts[i] - 1]
+                #if not v in geometry.vertices:
+                geometry.vertices.append(v)
+                v_index = geometry.vertices.index(v)
+                setattr(face3, e, v_index)
+
                 #get texture coordinate components
                 t = (0.0, 0.0)
                 if tcs[i] != -1:
                     t = self.loader.texcoords[tcs[i] - 1]
-                geometry.face_vertex_uvs[0].append(Vector2(t[0], 1. - t[1]))
+                tc = Vector2(t[0], 1. - t[1])
+                geometry.face_vertex_uvs[0].append(tc)
 
-                #get vertex components
-                v = self.loader.vertices[verts[i] - 1]
-                if not v in geometry.vertices:
-                    geometry.vertices.append(v)
-                v_index = geometry.vertices.index(v)
-                setattr(face3, e, v_index)
             geometry.faces.append(face3)
 
         # apply material for object
