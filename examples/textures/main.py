@@ -36,7 +36,7 @@ class MainApp(App):
         self.renderer.camera.aspect = aspect
 
     def _rotate_obj(self, dt):
-        self.orion.rotation.x += 2
+        self.orion.rot.x += 2
 
 
 if __name__ == '__main__':
