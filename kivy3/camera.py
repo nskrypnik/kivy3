@@ -57,6 +57,8 @@ class Camera(EventDispatcher):
         self.renderer = None  # renderer camera is bound to
         self._position = Vector3(0, 0, 0)
         self._position.set_change_cb(self.on_pos_changed)
+        self._look_at = None
+        self.look_at(Vector3(0, 0, -1))
 
     def _set_position(self, val):
         if isinstance(val, Vector3):
@@ -73,9 +75,7 @@ class Camera(EventDispatcher):
 
     def on_pos_changed(self, coord, v):
         """ Camera position was changed """
-        pos = self._position
-        m = Matrix().translate(pos[0], pos[1], pos[2])
-        self.modelview_matrix = Matrix().multiply(m)
+        self.look_at(self._look_at)
         self.update()
 
     def on_up(self, instance, up):
@@ -91,6 +91,7 @@ class Camera(EventDispatcher):
         m.look_at(pos[0], pos[1], pos[2], v[0], v[1], v[2],
                   self.up[0], self.up[1], self.up[2])
         self.modelview_matrix = m
+        self._look_at = v
         self.update()
 
     def bind_to(self, renderer):

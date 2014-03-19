@@ -45,9 +45,9 @@ class MainApp(App):
 
     def _on_keyboard_down(self,  keyboard, keycode, text, modifiers):
         if  keycode[1] == 'w':
-            self.camera.pos.z += 0.02
+            self.camera.pos.z -= 0.5
         elif keycode[1] == 's':
-            self.camera.pos.z -= 0.02
+            self.camera.pos.z += 0.5
         elif keycode[1] == 'a':
             self.camera.pos.x -= 0.02
         elif keycode[1] == 'd':
@@ -62,7 +62,6 @@ class MainApp(App):
         elif keycode[1] == 'left':
             self.look_at.x -= 0.02
 
-        print keycode, self.look_at
         self.camera.look_at(self.look_at)
 
     def _rotate_obj(self, dt):
