@@ -36,7 +36,8 @@ __all__ = ('Camera', )
 import math
 
 from kivy.event import EventDispatcher
-from kivy.properties import NumericProperty, ListProperty, ObjectProperty
+from kivy.properties import NumericProperty, ListProperty, ObjectProperty, \
+                            AliasProperty
 from kivy.graphics.transformation import Matrix
 from .math.vectors import Vector3
 
@@ -46,34 +47,57 @@ class Camera(EventDispatcher):
     Base camera class
     """
 
-    position = ObjectProperty(Vector3(0, 0, 0))
     scale = NumericProperty(1.0)
     up = ObjectProperty(Vector3(0, 1, 0))
 
     def __init__(self):
         super(Camera, self).__init__()
+        self.projection_matrix = Matrix()
+        self.modelview_matrix = Matrix()
         self.renderer = None  # renderer camera is bound to
+        self._position = Vector3(0, 0, 0)
+        self._position.set_change_cb(self.on_pos_changed)
 
-    def on_position(self, instance, pos):
+    def _set_position(self, val):
+        if isinstance(val, Vector3):
+            self._position = val
+        else:
+            self._position = Vector3(val)
+        self._position.set_change_cb(self.on_pos_changed)
+
+    def _get_position(self):
+        return self._position
+
+    position = AliasProperty(_get_position, _set_position)
+    pos = position  # just shortcut
+
+    def on_pos_changed(self, coord, v):
         """ Camera position was changed """
+        pos = self._position
+        m = Matrix().translate(pos[0], pos[1], pos[2])
+        self.modelview_matrix = Matrix().multiply(m)
         self.update()
 
     def on_up(self, instance, up):
         """ Camera up vector was changed """
-        self.update()
+        pass
 
     def on_scale(self, instance, scale):
         """ Handler for change scale parameter event """
 
-    def look_at(self):
-        pass
+    def look_at(self, v):
+        m = Matrix()
+        pos = self._position
+        m.look_at(pos[0], pos[1], pos[2], v[0], v[1], v[2],
+                  self.up[0], self.up[1], self.up[2])
+        self.modelview_matrix = m
+        self.update()
 
     def bind_to(self, renderer):
         """ Bind this camera to renderer """
         self.renderer = renderer
 
     def update(self):
-        self.update_projection_matrix()
         if self.renderer:
             self.renderer._update_matrices()
 
@@ -101,13 +125,11 @@ class PerspectiveCamera(Camera):
         self.aspect = aspect
         self.near = near
         self.far = far
-        self.projection_matrix = Matrix()
-        self.modelview_matrix = Matrix()
         self.update_projection_matrix()
-
         self.bind(aspect=self._on_aspect)
 
     def _on_aspect(self, inst, value):
+        self.update_projection_matrix()
         self.update()
 
     def update_projection_matrix(self):
