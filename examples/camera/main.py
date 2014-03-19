@@ -31,6 +31,7 @@ class MainApp(App):
 
         root.add_widget(self.renderer)
         self.renderer.bind(size=self._adjust_aspect)
+        Clock.schedule_interval(self._rotate_obj, 1 / 20)
         return root
 
     def _adjust_aspect(self, inst, val):
@@ -53,16 +54,20 @@ class MainApp(App):
             self.camera.pos.x += 0.02
 
         elif keycode[1] == 'up':
-            self.look_at.y += 0.002
+            self.look_at.y += 0.02
         elif keycode[1] == 'down':
-            self.look_at.y -= 0.002
+            self.look_at.y -= 0.02
         elif keycode[1] == 'right':
-            self.look_at.x += 0.002
+            self.look_at.x += 0.02
         elif keycode[1] == 'left':
-            self.look_at.x -= 0.002
+            self.look_at.x -= 0.02
 
         print keycode, self.look_at
         self.camera.look_at(self.look_at)
+
+    def _rotate_obj(self, dt):
+        self.orion.rot.x += 2
+        self.orion.rot.z += 2
 
 
 if __name__ == '__main__':
