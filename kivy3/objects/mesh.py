@@ -57,7 +57,7 @@ class Mesh(Object3D):
                     normal = Vector3([0, 0, 0])
                 vertices.extend(normal)
                 try:
-                    tex_coords = self.geometry.face_vertex_uvs[0][v_idx]
+                    tex_coords = self.geometry.face_vertex_uvs[0][idx]
                     vertices.extend(tex_coords)
                 except IndexError:
                     vertices.extend([0, 0])

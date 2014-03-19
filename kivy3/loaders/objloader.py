@@ -61,6 +61,8 @@ class WaveObject(object):
         geometry = Geometry()
         material = Material()
         mtl_dirname = os.path.abspath(os.path.dirname(self.loader.mtl_source))
+
+        v_idx = 0
         # create geometry for mesh
         for f in self.faces:
             verts = f[0]
@@ -76,10 +78,9 @@ class WaveObject(object):
 
                 #get vertex components
                 v = self.loader.vertices[verts[i] - 1]
-                #if not v in geometry.vertices:
                 geometry.vertices.append(v)
-                v_index = geometry.vertices.index(v)
-                setattr(face3, e, v_index)
+                setattr(face3, e, v_idx)
+                v_idx += 1
 
                 #get texture coordinate components
                 t = (0.0, 0.0)
