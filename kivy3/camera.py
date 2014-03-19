@@ -48,7 +48,7 @@ class Camera(EventDispatcher):
 
     position = ObjectProperty(Vector3(0, 0, 0))
     scale = NumericProperty(1.0)
-    up = ObjectProperty(Vector3(0, 0, 0))
+    up = ObjectProperty(Vector3(0, 1, 0))
 
     def __init__(self):
         super(Camera, self).__init__()
@@ -111,11 +111,7 @@ class PerspectiveCamera(Camera):
         self.update()
 
     def update_projection_matrix(self):
-        top = math.tan(math.radians(self.fov * 0.5)) * self.near
-        bottom = -top
-        left = self.aspect * bottom
-        right = self.aspect * top
-
-        self.projection_matrix = Matrix().view_clip(left, right, bottom,
-                                        top, self.near, self.far, 1)
+        m = Matrix()
+        m.perspective(self.fov * 0.5, self.aspect, self.near, self.far)
+        self.projection_matrix = m
 
