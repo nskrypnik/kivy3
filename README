@@ -1,1 +1,3 @@
-This is the framework for 3D graphics for using it with Kivy and development cross-platform 3D applications.
+Kivy3 is port of famous Javascript framework for 3D graphics on Python language with using Kivy framework, so you may write crossplatform application(for all platforms are supported by Kivy) with using 3D graphics.
+
+Project is currently under early development and if you want to help develop this project - don't hesitate to mail me on nskrypnik@mail.com. 
