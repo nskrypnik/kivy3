@@ -87,9 +87,10 @@ class Camera(EventDispatcher):
 
     def look_at(self, v):
         m = Matrix()
-        pos = self._position
-        m.look_at(pos[0], pos[1], pos[2], v[0], v[1], v[2],
-                  self.up[0], self.up[1], self.up[2])
+        pos = self._position * -1
+        #m = m.look_at(pos[0], pos[1], pos[2], v[0], v[1], v[2],
+        #          self.up[0], self.up[1], self.up[2])
+        m = m.translate(pos[0], pos[1], pos[2])
         self.modelview_matrix = m
         self._look_at = v
         self.update()
