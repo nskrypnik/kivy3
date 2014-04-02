@@ -56,5 +56,6 @@ void main (void){
     vec3 Is = Ks * pow(max(dot(v_light, v_normal), 0.0), Ns);
 
     vec4 tex_color = texture2D(tex, uv_vec);
-    gl_FragColor = vec4(Ia + Id*vec3(tex_color) + Is, Tr*tex_color[3]);
+    gl_FragColor = vec4(Ia + Id + Is, Tr);
+    gl_FragColor = gl_FragColor * tex_color;
 }
