@@ -50,7 +50,7 @@ uniform sampler2D tex;
 void main (void){
     vec4 v_normal = normalize( normal_mat * normal_vec );
     vec4 v_light = normalize( vec4(0,0,0,1) - vertex_pos );
-    
+
     vec3 Ia = Ka;
     vec3 Id = Kd * max(dot(v_light, v_normal), 0.0);
     vec3 Is = Ks * pow(max(dot(v_light, v_normal), 0.0), Ns);
