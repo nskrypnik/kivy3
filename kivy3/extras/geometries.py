@@ -41,6 +41,10 @@ class BoxGeometry(Geometry):
                    (7, 4, 3), (5, 1, 2), (6, 5, 2)
                    ]
 
+    _cube_normals = [(0, 0, 1), (-1, 0, 0), (0, 0, -1),
+                     (1, 0, 0), (0, 1, 0), (0, -1, 0)
+                     ]
+
     def __init__(self, width, height, depth, **kw):
         name = kw.pop('name', '')
         super(BoxGeometry, self).__init__(name)
@@ -62,5 +66,10 @@ class BoxGeometry(Geometry):
                         0.5 * v[2] * self.d)
             self.vertices.append(v)
 
+        n_idx = 0
         for f in self._cube_faces:
-            self.faces.append(Face3(*f))
+            face3 = Face3(*f)
+            normal = self._cube_normals[n_idx / 2]
+            face3.vertex_normals = [normal, normal, normal]
+            n_idx += 1
+            self.faces.append(face3)
