@@ -66,6 +66,8 @@ class Camera(EventDispatcher):
         else:
             self._position = Vector3(val)
         self._position.set_change_cb(self.on_pos_changed)
+        self.look_at(self._look_at)
+        self.update()
 
     def _get_position(self):
         return self._position

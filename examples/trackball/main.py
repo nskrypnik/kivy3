@@ -1,6 +1,6 @@
 
 import os
-import kivy3
+import math
 from kivy.app import App
 from kivy.clock import Clock
 from kivy3 import Scene, Renderer, PerspectiveCamera
@@ -10,18 +10,20 @@ from kivy.uix.floatlayout import FloatLayout
 
 class ObjectTrackball(FloatLayout):
 
-    def __init__(self, *args, **kw):
+    def __init__(self, camera, radius, *args, **kw):
         super(ObjectTrackball, self).__init__(*args, **kw)
-        self.obj3d = None
+        self.camera = camera
+        self.radius = radius
+        self.phi = 90
+        self.theta = 0
         self._touches = []
-
-    def set_object(self, obj3d):
-        self.obj3d = obj3d
+        self.camera.pos.z = radius
+        camera.look_at((0, 0, 0))
 
     def define_rotate_angle(self, touch):
-        x_angle = (touch.dx / self.width) * 360
-        y_angle = -1 * (touch.dy / self.height) * 360
-        return x_angle, y_angle
+        theta_angle = (touch.dx / self.width) * -360
+        phi_angle = -1 * (touch.dy / self.height) * 360
+        return phi_angle, theta_angle
 
     def on_touch_down(self, touch):
         touch.grab(self)
@@ -39,16 +41,21 @@ class ObjectTrackball(FloatLayout):
                 pass
 
     def do_rotate(self, touch):
-        ax, ay = self.define_rotate_angle(touch)
-        if self.obj3d:
-            self.obj3d.rot.x += ay
-            self.obj3d.rot.y += ax
+        d_phi, d_theta = self.define_rotate_angle(touch)
+        self.phi += d_phi
+        self.theta += d_theta
+
+        _phi = math.radians(self.phi)
+        _theta = math.radians(self.theta)
+        z = self.radius * math.cos(_theta) * math.sin(_phi)
+        x = self.radius * math.sin(_theta) * math.sin(_phi)
+        y = self.radius * math.cos(_phi)
+        self.camera.pos = x, y, z
 
 
 class MainApp(App):
 
     def build(self):
-        root = ObjectTrackball()
         self.renderer = Renderer()
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
@@ -56,16 +63,13 @@ class MainApp(App):
         obj = loader.load("MQ-27.obj")
         self.obj3d = obj
         self.camera = camera
+        root = ObjectTrackball(camera, 1500)
 
         scene.add(obj)
 
         self.renderer.render(scene, camera)
 
-        # move camera to get chance see the object
-        camera.pos.z += 1500
-
         root.add_widget(self.renderer)
-        root.set_object(obj)
         self.renderer.bind(size=self._adjust_aspect)
         return root
 

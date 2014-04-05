@@ -63,7 +63,8 @@ class Renderer(Widget):
         with self.canvas:
             self._viewport = Rectangle(size=self.size, pos=self.pos)
             self.fbo = Fbo(size=self.size,
-                           with_depthbuffer=True, compute_normal_mat=True)
+                           with_depthbuffer=True, compute_normal_mat=True,
+                           clear_color=(0., 0., 0., 0.))
         self._config_fbo()
         self.texture = self.fbo.texture
         self.camera = None
