@@ -87,7 +87,9 @@ class Camera(EventDispatcher):
     def on_scale(self, instance, scale):
         """ Handler for change scale parameter event """
 
-    def look_at(self, v):
+    def look_at(self, *v):
+        if len(v) == 1:
+            v = v[0]
         m = Matrix()
         pos = self._position * -1
         m = m.look_at(pos[0], pos[1], pos[2], v[0], v[1], v[2],
