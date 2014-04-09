@@ -42,6 +42,7 @@ def set_attribute_to_uniform(attr_name, uniform_var):
 class Material(ChangeState):
 
     def __init__(self, **kw):
+	self.map = kw.pop("map", None)
         super(Material, self).__init__()
         kw.setdefault("transparency", 1.)
         kw.setdefault("color", (1., 1., 1.))
@@ -50,7 +51,6 @@ class Material(ChangeState):
         kw.setdefault("shininess", 10.)
         for k, v in kw.iteritems():
             setattr(self, k, v)
-        self.map = None
 
     def __setattr__(self, k, v):
         if k in MATERIAL_TO_SHADER_MAP:
