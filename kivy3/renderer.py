@@ -100,6 +100,7 @@ class Renderer(Widget):
         self.fbo.size = value
         self._viewport.texture = self.fbo.texture
         self._viewport.size = value
+        self._viewport.pos = self.pos
         self._update_matrices()
 
     def on_texture(self, instance, value):
