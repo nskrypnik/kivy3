@@ -103,6 +103,10 @@ class Renderer(Widget):
         self._viewport.pos = self.pos
         self._update_matrices()
 
+    def on_pos(self, instance, value):
+        self._viewport.pos = self.pos
+        self._update_matrices()
+
     def on_texture(self, instance, value):
         self._viewport.texture = value
 
