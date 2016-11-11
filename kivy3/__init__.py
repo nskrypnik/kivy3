@@ -8,4 +8,3 @@ from .objects.mesh import Mesh
 from .materials import Material
 from .core.geometry import Geometry
 from .core.face3 import Face3
-
