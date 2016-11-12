@@ -42,7 +42,7 @@ def set_attribute_to_uniform(attr_name, uniform_var):
 class Material(ChangeState):
 
     def __init__(self, **kw):
-	self.map = kw.pop("map", None)
+        self.map = kw.pop("map", None)
         super(Material, self).__init__()
         kw.setdefault("transparency", 1.)
         kw.setdefault("color", (1., 1., 1.))
@@ -60,4 +60,3 @@ class Material(ChangeState):
             if type(v) in [float, int, str, list]:
                 self.changes[k] = v
         super(Material, self).__setattr__(k, v)
-
