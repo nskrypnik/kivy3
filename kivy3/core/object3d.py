@@ -137,4 +137,3 @@ class Object3D(EventDispatcher):
     def get_children_instructions(self):
         for child in self.children:
             yield child.as_instructions()
-

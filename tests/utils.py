@@ -54,14 +54,16 @@ class Sandbox:
         setattr(obj, func_name, Spy(**kw))
 
     def restore(self):
+        if not hasattr(self, '_storage'):
+            return
+
         for obj, obj_storage in self._storage.iteritems():
             keys_to_del = []
             for key, original_value in obj_storage.iteritems():
                 # restore all original value to an object
                 setattr(obj, key, original_value)
                 keys_to_del.append(key)
-            for key in keys_to_del:
-                del obj_storage[key]
+        del self._storage
 
     def __del__(self):
         'When we destruct object don\'t forget to restore all values'
