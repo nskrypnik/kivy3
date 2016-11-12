@@ -38,7 +38,7 @@ from kivy.uix.floatlayout import FloatLayout
 # Resources pathes
 _this_path = os.path.dirname(os.path.realpath(__file__))
 shader_file = os.path.join(_this_path, "./simple.glsl")
-obj_path = os.path.join(_this_path, "../tests/testnurbs.obj")
+obj_path = os.path.join(_this_path, "./testnurbs.obj")
 
 
 class MainApp(App):

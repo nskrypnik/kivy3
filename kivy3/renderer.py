@@ -73,7 +73,7 @@ class Renderer(Widget):
     def _config_fbo(self):
         # set shader file here
         self.fbo.shader.source = self.shader_file or \
-                                os.path.join(kivy3_path, "default.glsl")
+            os.path.join(kivy3_path, "default.glsl")
         with self.fbo:
             Callback(self._setup_gl_context)
             PushMatrix()

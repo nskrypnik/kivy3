@@ -123,7 +123,7 @@ class OBJLoader(BaseLoader):
 
     def load_mtl(self):
         if not os.path.exists(self.mtl_source):
-            # skip loading material
+            #TODO show warning about materials file is not found
             return
         for line in open(self.mtl_source, "r"):
             if line.startswith('#'):

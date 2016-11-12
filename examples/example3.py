@@ -44,8 +44,8 @@ class MainApp(App):
         camera = PerspectiveCamera(15, 1, 1, 1000)
         # load obj file
         loader = OBJMTLLoader()
-        obj_path = os.path.join(os.path.dirname(kivy3.__file__), "tests/testnurbs.obj")
-        obj = loader.load(obj_path, "testnurbs.mtl")
+        obj_path = os.path.join(os.path.dirname(__file__), "./testnurbs.obj")
+        obj = loader.load(obj_path, "./testnurbs.mtl")
 
         scene.add(*obj.children)
         for obj in scene.children:

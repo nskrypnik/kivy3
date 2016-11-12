@@ -7,6 +7,10 @@ from kivy3 import Scene, Renderer, PerspectiveCamera
 from kivy3.loaders import OBJLoader
 from kivy.uix.floatlayout import FloatLayout
 
+# Resources pathes
+_this_path = os.path.dirname(os.path.realpath(__file__))
+obj_file = os.path.join(_this_path, "./MQ-27.obj")
+
 
 class ObjectTrackball(FloatLayout):
 
@@ -60,7 +64,7 @@ class MainApp(App):
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
         loader = OBJLoader()
-        obj = loader.load("MQ-27.obj")
+        obj = loader.load(obj_file)
         self.obj3d = obj
         self.camera = camera
         root = ObjectTrackball(camera, 1500)

@@ -22,23 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-
+import os
 from kivy.app import App
 from kivy3 import Scene, Renderer, PerspectiveCamera
 from kivy3.loaders import OBJLoader
 from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
 
+# Resources pathes
+_this_path = os.path.dirname(os.path.realpath(__file__))
+shader_file = os.path.join(_this_path, "./simple.glsl")
+obj_file = os.path.join(_this_path, "./monkey.obj")
+
 
 class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        self.renderer = Renderer(shader_file="simple.glsl")
+        self.renderer = Renderer(shader_file=shader_file)
         scene = Scene()
         # load obj file
         loader = OBJLoader()
-        obj = loader.load("monkey.obj")
+        obj = loader.load(obj_file)
         self.monkey = obj.children[0]
 
         scene.add(*obj.children)

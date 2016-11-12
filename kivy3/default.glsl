@@ -38,11 +38,11 @@ varying vec4 frag_color;
 varying vec2 uv_vec;
 
 uniform mat4 normal_mat;
-uniform vec3 Kd;
-uniform vec3 Ka;
-uniform vec3 Ks;
-uniform float Tr;
-uniform float Ns;
+uniform vec3 Kd; // diffuse color
+uniform vec3 Ka; // color
+uniform vec3 Ks; // specular color
+uniform float Tr; // transparency
+uniform float Ns; // shininess
 
 
 uniform sampler2D tex;

@@ -18,10 +18,10 @@ class SceneApp(App):
         self.renderer.set_clear_color((.2, .2, .2, 1.))
         scene = Scene()
         geometry = BoxGeometry(1, 1, 1)
-        material = Material(color=(0., 1., 0.), diffuse=(0., 1., 0.),
+        material = Material(color=(0., 0., 1.), diffuse=(1., 1., 0.),
                             specular=(.35, .35, .35))
         self.cube = Mesh(geometry, material)
-        self.cube.pos.z = -3
+        self.cube.pos.z = -5
         camera = PerspectiveCamera(75, 0.3, 1, 1000)
 
         scene.add(self.cube)
@@ -46,4 +46,3 @@ class SceneApp(App):
 
 if __name__ == '__main__':
     SceneApp().run()
-
