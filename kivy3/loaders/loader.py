@@ -32,7 +32,7 @@ Base loader class which should be used by all other loaders implementations
 from kivy.clock import Clock
 
 
-class Loader(object):
+class BaseLoader(object):
 
     def __init__(self, **kw):
         self._on_load_start = kw.pop("on_load_start", None)
@@ -58,7 +58,7 @@ class Loader(object):
                 raise Exception("%s should be callable" % k)
             setattr(self, "_%s" % k, v)
         else:
-            super(Loader, self).__setattr__(k, v)
+            super(BaseLoader, self).__setattr__(k, v)
 
     def load(self, source, on_load=None, on_progress=None, on_error=None):
         """This function loads objects from source. This function may work
@@ -80,4 +80,4 @@ class Loader(object):
         """ This should be overridden in subclasses to provide
         parse of the source and return loaded from source object
         """
-        pass
+        raise NotImplementedError('Must be overriden in subclass')

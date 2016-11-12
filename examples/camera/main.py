@@ -8,18 +8,23 @@ from kivy3 import Scene, Renderer, PerspectiveCamera, Vector3
 from kivy3.loaders import OBJMTLLoader
 from kivy.uix.floatlayout import FloatLayout
 
+# Resources pathes
+_this_path = os.path.dirname(os.path.realpath(__file__))
+shader_file = os.path.join(_this_path, "../textures/simple.glsl")
+obj_file = os.path.join(_this_path, "../textures/orion.obj")
+mtl_file = os.path.join(_this_path, "../textures/orion.mtl")
 
 class MainApp(App):
 
     def build(self):
         self.look_at = Vector3(0, 0, -1)
         root = FloatLayout()
-        self.renderer = Renderer(shader_file="../textures/simple.glsl")
+        self.renderer = Renderer(shader_file=shader_file)
         scene = Scene()
         self.camera = PerspectiveCamera(75, 1, 1, 1000)
         self.camera.pos.z = 5
         loader = OBJMTLLoader()
-        obj = loader.load("../textures/orion.obj", "../textures/orion.mtl")
+        obj = loader.load(obj_file, mtl_file)
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
@@ -48,9 +53,9 @@ class MainApp(App):
         elif keycode[1] == 's':
             self.camera.pos.z += 0.2
         elif keycode[1] == 'a':
-            self.camera.pos.x -= 0.2
+            self.camera.pos.y -= 0.2
         elif keycode[1] == 'd':
-            self.camera.pos.x += 0.2
+            self.camera.pos.y += 0.2
 
         elif keycode[1] == 'up':
             self.look_at.y += 0.2

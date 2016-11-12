@@ -35,16 +35,21 @@ from kivy3.loaders import OBJLoader
 from kivy.uix.floatlayout import FloatLayout
 
 
+# Resources pathes
+_this_path = os.path.dirname(os.path.realpath(__file__))
+shader_file = os.path.join(_this_path, "./simple.glsl")
+obj_path = os.path.join(_this_path, "../tests/testnurbs.obj")
+
+
 class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        self.renderer = Renderer(shader_file="simple.glsl")
+        self.renderer = Renderer(shader_file=shader_file)
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
         # load obj file
         loader = OBJLoader()
-        obj_path = os.path.join(os.path.dirname(kivy3.__file__), "tests/testnurbs.obj")
         obj = loader.load(obj_path)
 
         scene.add(*obj.children)
