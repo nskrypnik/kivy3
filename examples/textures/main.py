@@ -7,20 +7,26 @@ from kivy3 import Scene, Renderer, PerspectiveCamera
 from kivy3.loaders import OBJMTLLoader
 from kivy.uix.floatlayout import FloatLayout
 
+# Resources pathes
+_this_path = os.path.dirname(os.path.realpath(__file__))
+shader_file = os.path.join(_this_path, "./simple.glsl")
+obj_file = os.path.join(_this_path, "./orion.obj")
+mtl_file = os.path.join(_this_path, "./orion.mtl")
+
 
 class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        self.renderer = Renderer(shader_file="simple.glsl")
+        self.renderer = Renderer(shader_file=shader_file)
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
         loader = OBJMTLLoader()
-        obj = loader.load("orion.obj", "orion.mtl")
+        obj = loader.load(obj_file, mtl_file)
 
         scene.add(*obj.children)
         for obj in scene.children:
-            obj.pos.z = -6.
+            obj.pos.z = -20.
 
         self.renderer.render(scene, camera)
         self.orion = scene.children[0]
