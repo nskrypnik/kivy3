@@ -9,9 +9,7 @@ Kivy3 provides you a toolset and abstraction levels to work with 3D objects like
 First make sure that you have **kivy** installed on your machine. You may find instructions for installing Kivy framework [here](https://kivy.org/docs/installation/installation.html). When Kivy is installed, just follow next instruction:
 
 ```
-$ git clone git@github.com:nskrypnik/kivy3.git <path-to-dir>
-$ cd <path-to-dir>
-$ python setup.py install
+$ pip install https://github.com/nskrypnik/kivy3/zipball/master
 ```
 
 # Packaging kivy3
