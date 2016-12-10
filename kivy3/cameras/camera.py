@@ -49,12 +49,15 @@ class Camera(Object3D, EventDispatcher):
     """
 
     scale = NumericProperty(1.0)
+    right = ObjectProperty(Vector3(1, 0, 0))
     up = ObjectProperty(Vector3(0, 1, 0))
+    back = ObjectProperty(Vector3(0, 0, 1))
 
     def __init__(self):
         super(Camera, self).__init__()
         self.projection_matrix = Matrix()
         self.modelview_matrix = Matrix()
+        self.viewport_matrix = (0, 0, 0, 0)
         self.renderer = None  # renderer camera is bound to
         self._look_at = None
         self.look_at(Vector3(0, 0, -1))
@@ -87,6 +90,11 @@ class Camera(Object3D, EventDispatcher):
         m = m.rotate(radians(self.rot.y), 0.0, 1.0, 0.0)
         m = m.rotate(radians(self.rot.z), 0.0, 0.0, 1.0)
         self.modelview_matrix = m
+
+        # set camera vectors from view matrix
+        self.right = Vector3(m[0], m[1], m[2])
+        self.up = Vector3(m[4], m[5], m[6])
+        self.back = Vector3(m[8], m[9], m[10])
         self._look_at = v
         self.update()
 
@@ -97,6 +105,12 @@ class Camera(Object3D, EventDispatcher):
     def update(self):
         if self.renderer:
             self.renderer._update_matrices()
+            self.viewport_matrix = (
+                self.renderer._viewport.pos[0],
+                self.renderer._viewport.pos[1],
+                self.renderer._viewport.size[0],
+                self.renderer._viewport.size[1]
+            )
 
     def update_projection_matrix(self):
         """ This function should be overridden in the subclasses
