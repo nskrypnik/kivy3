@@ -49,9 +49,10 @@ class Camera(Object3D, EventDispatcher):
     """
 
     scale = NumericProperty(1.0)
-    right = ObjectProperty(Vector3(1, 0, 0))
+    _right = ObjectProperty(Vector3(1, 0, 0))
+    _up = ObjectProperty(Vector3(0, 1, 0))
+    _back = ObjectProperty(Vector3(0, 0, 1))
     up = ObjectProperty(Vector3(0, 1, 0))
-    back = ObjectProperty(Vector3(0, 0, 1))
 
     def __init__(self):
         super(Camera, self).__init__()
@@ -92,9 +93,9 @@ class Camera(Object3D, EventDispatcher):
         self.modelview_matrix = m
 
         # set camera vectors from view matrix
-        self.right = Vector3(m[0], m[1], m[2])
-        self.up = Vector3(m[4], m[5], m[6])
-        self.back = Vector3(m[8], m[9], m[10])
+        self._right = Vector3(m[0], m[1], m[2])
+        self._up = Vector3(m[4], m[5], m[6])
+        self._back = Vector3(m[8], m[9], m[10])
         self._look_at = v
         self.update()
 
