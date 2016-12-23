@@ -41,15 +41,19 @@ def set_attribute_to_uniform(attr_name, uniform_var):
 
 class Material(ChangeState):
 
-    def __init__(self, **kw):
-        self.map = kw.pop("map", None)
+    def __init__(self, map=None, transparency=1.0, color=(1, 1, 1),
+                 diffuse=(0, 0, 0), specular=(0, 0, 0),
+                 shininess=10.0, **kwargs):
+        self.map = map
         super(Material, self).__init__()
-        kw.setdefault("transparency", 1.)
-        kw.setdefault("color", (1., 1., 1.))
-        kw.setdefault("diffuse", (0., 0., 0.))
-        kw.setdefault("specular", (0., 0., 0.))
-        kw.setdefault("shininess", 10.)
-        for k, v in kw.iteritems():
+        transparency = float(transparency)
+        color = tuple(float(c) for c in color)
+        diffuse = tuple(float(d) for d in diffuse)
+        specular = tuple(float(s) for s in specular)
+        shininess = float(shininess)
+
+        # set attribute from locals
+        for k, v in locals().items():
             setattr(self, k, v)
 
     def __setattr__(self, k, v):
