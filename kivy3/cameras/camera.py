@@ -34,14 +34,15 @@ __all__ = ('Camera', )
 
 import math
 
-from kivy.event import EventDispatcher
 from kivy.properties import NumericProperty, ListProperty, ObjectProperty, \
     AliasProperty
 from kivy.graphics.transformation import Matrix
 from ..math.vectors import Vector3
+from ..core.object3d import Object3D
+from math import radians
 
 
-class Camera(EventDispatcher):
+class Camera(Object3D):
     """
     Base camera class
     """
@@ -54,25 +55,13 @@ class Camera(EventDispatcher):
         self.projection_matrix = Matrix()
         self.modelview_matrix = Matrix()
         self.renderer = None  # renderer camera is bound to
-        self._position = Vector3(0, 0, 0)
-        self._position.set_change_cb(self.on_pos_changed)
         self._look_at = None
         self.look_at(Vector3(0, 0, -1))
 
     def _set_position(self, val):
-        if isinstance(val, Vector3):
-            self._position = val
-        else:
-            self._position = Vector3(val)
-        self._position.set_change_cb(self.on_pos_changed)
+        super(Camera, self).on_pos_changed(val)
         self.look_at(self._look_at)
         self.update()
-
-    def _get_position(self):
-        return self._position
-
-    position = AliasProperty(_get_position, _set_position)
-    pos = position  # just shortcut
 
     def on_pos_changed(self, coord, v):
         """ Camera position was changed """
@@ -93,6 +82,9 @@ class Camera(EventDispatcher):
         pos = self._position * -1
         m = m.look_at(pos[0], pos[1], pos[2], v[0], v[1], v[2],
                       self.up[0], self.up[1], self.up[2])
+        m = m.rotate(radians(self.rot.x), 1.0, 0.0, 0.0)
+        m = m.rotate(radians(self.rot.y), 0.0, 1.0, 0.0)
+        m = m.rotate(radians(self.rot.z), 0.0, 0.0, 1.0)
         self.modelview_matrix = m
         self._look_at = v
         self.update()
