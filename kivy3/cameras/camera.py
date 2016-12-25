@@ -34,7 +34,6 @@ __all__ = ('Camera', )
 
 import math
 
-from kivy.event import EventDispatcher
 from kivy.properties import NumericProperty, ListProperty, ObjectProperty, \
     AliasProperty
 from kivy.graphics.transformation import Matrix
@@ -43,7 +42,7 @@ from ..core.object3d import Object3D
 from math import radians
 
 
-class Camera(Object3D, EventDispatcher):
+class Camera(Object3D):
     """
     Base camera class
     """
@@ -58,8 +57,8 @@ class Camera(Object3D, EventDispatcher):
         super(Camera, self).__init__()
         self.projection_matrix = Matrix()
         self.modelview_matrix = Matrix()
-        self.viewport_matrix = (0, 0, 0, 0)
         self.model_matrix = Matrix()
+        self.viewport_matrix = (0, 0, 0, 0)
         self.renderer = None  # renderer camera is bound to
         self._look_at = None
         self.look_at(Vector3(0, 0, -1))
@@ -106,16 +105,16 @@ class Camera(Object3D, EventDispatcher):
 
     def update(self):
         if self.renderer:
-            model_matrix = self.modelview_matrix.multiply(
-                self.renderer.fbo['view_mat'].inverse())
-            self.model_matrix = model_matrix
-            self.renderer._update_matrices()
             self.viewport_matrix = (
                 self.renderer._viewport.pos[0],
                 self.renderer._viewport.pos[1],
                 self.renderer._viewport.size[0],
                 self.renderer._viewport.size[1]
             )
+            model_matrix = self.modelview_matrix.multiply(
+                self.renderer.fbo['view_mat'].inverse())
+            self.model_matrix = model_matrix
+            self.renderer._update_matrices()
 
     def update_projection_matrix(self):
         """ This function should be overridden in the subclasses
