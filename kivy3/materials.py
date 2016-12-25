@@ -27,12 +27,12 @@ from kivy.graphics import ChangeState
 # Map for material attributes to shader
 # uniform variables
 MATERIAL_TO_SHADER_MAP = {
-                          "color": "Ka",
-                          "transparency": "Tr",
-                          "diffuse": "Kd",
-                          "specular": "Ks",
-                          "shininess": "Ns",  # specular coefficient
-                          }
+    "color": "Ka",
+    "transparency": "Tr",
+    "diffuse": "Kd",
+    "specular": "Ks",
+    "shininess": "Ns",  # specular coefficient
+}
 
 
 def set_attribute_to_uniform(attr_name, uniform_var):

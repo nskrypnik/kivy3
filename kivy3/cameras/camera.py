@@ -59,6 +59,7 @@ class Camera(Object3D, EventDispatcher):
         self.projection_matrix = Matrix()
         self.modelview_matrix = Matrix()
         self.viewport_matrix = (0, 0, 0, 0)
+        self.model_matrix = Matrix()
         self.renderer = None  # renderer camera is bound to
         self._look_at = None
         self.look_at(Vector3(0, 0, -1))
@@ -105,6 +106,9 @@ class Camera(Object3D, EventDispatcher):
 
     def update(self):
         if self.renderer:
+            model_matrix = self.modelview_matrix.multiply(
+                self.renderer.fbo['view_mat'].inverse())
+            self.model_matrix = model_matrix
             self.renderer._update_matrices()
             self.viewport_matrix = (
                 self.renderer._viewport.pos[0],
