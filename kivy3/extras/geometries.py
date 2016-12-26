@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
+from math import floor
 
 from kivy3 import Vector3
 from kivy3.core.geometry import Geometry
@@ -69,7 +70,7 @@ class BoxGeometry(Geometry):
         n_idx = 0
         for f in self._cube_faces:
             face3 = Face3(*f)
-            normal = self._cube_normals[n_idx / 2]
+            normal = self._cube_normals[floor(n_idx / 2)]
             face3.vertex_normals = [normal, normal, normal]
             n_idx += 1
             self.faces.append(face3)
