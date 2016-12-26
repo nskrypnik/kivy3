@@ -129,7 +129,7 @@ class Object3D(EventDispatcher):
             self._instructions.add(self._push_matrix)
             self._instructions.add(self._translate)
             self._instructions.add(self.scale)
-            for rot in self._rotors.itervalues():
+            for rot in self._rotors.values():
                 self._instructions.add(rot)
             self._instructions.add(UpdateNormalMatrix())
             for instr in self.custom_instructions():
