@@ -26,10 +26,10 @@ from kivy.graphics import Mesh as KivyMesh
 from kivy3 import Vector3
 from kivy3.core.object3d import Object3D
 
-DEFAULT_VERTEX_FORMAT = [('v_pos', 3, 'float'),
-            ('v_normal', 3, 'float'),
-            ('v_tc0', 2, 'float')]
-
+DEFAULT_VERTEX_FORMAT = [
+    (b'v_pos', 3, 'float'),
+    (b'v_normal', 3, 'float'),
+    (b'v_tc0', 2, 'float')]
 
 class Mesh(Object3D):
 
