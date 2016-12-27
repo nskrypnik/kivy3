@@ -55,6 +55,7 @@ class ObjectTrackball(FloatLayout):
         x = self.radius * math.sin(_theta) * math.sin(_phi)
         y = self.radius * math.cos(_phi)
         self.camera.pos = x, y, z
+        self.camera.look_at((0,0,0))
 
 
 class MainApp(App):
@@ -62,7 +63,7 @@ class MainApp(App):
     def build(self):
         self.renderer = Renderer()
         scene = Scene()
-        camera = PerspectiveCamera(15, 1, 1, 1000)
+        camera = PerspectiveCamera(15, 1, 100, 2500)
         loader = OBJLoader()
         obj = loader.load(obj_file)
         self.obj3d = obj
@@ -72,6 +73,7 @@ class MainApp(App):
         scene.add(obj)
 
         self.renderer.render(scene, camera)
+        self.renderer.main_light.intensity = 500
 
         root.add_widget(self.renderer)
         self.renderer.bind(size=self._adjust_aspect)

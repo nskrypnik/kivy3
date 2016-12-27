@@ -61,6 +61,7 @@ uniform vec3 Kd; // diffuse color
 uniform vec3 Ks; // specular color
 uniform float Tr; // transparency
 uniform float Ns; // shininess
+uniform float tex_ratio;
 
 uniform vec3 light_pos;
 uniform float light_intensity;
@@ -81,18 +82,18 @@ void main (void){
     vec4 v_light = vec4(light_pos, 1.0) - vertex_world;
 
     // set ambient, diffuse, specular color
-    vec3 Ia = Ka;
+    vec3 Ia = Ka * light_intensity / lightPosLen;
     vec3 Id = Kd * max(dot(v_light, v_normal), 0.0);
     vec3 Is = Ks * pow(max(dot(v_light, v_normal), 0.0), Ns);
 
     // modify texture color by light intensity
     tex_color = vec4(
-        tex_color.xyz * light_intensity / lightPosLen,
+        tex_color.rgb * light_intensity / lightPosLen,
         tex_color[3]
     );
 
     // required shader output
     // window-space fragment color with texture
     gl_FragColor = vec4(Ia + Id + Is, Tr);
-    gl_FragColor = gl_FragColor * tex_color;
+    gl_FragColor = mix(gl_FragColor, tex_color, tex_ratio);
 }
