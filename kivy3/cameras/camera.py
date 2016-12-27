@@ -53,6 +53,7 @@ class Camera(EventDispatcher):
         super(Camera, self).__init__()
         self.projection_matrix = Matrix()
         self.modelview_matrix = Matrix()
+        self.model_matrix = Matrix()
         self.renderer = None  # renderer camera is bound to
         self._position = Vector3(0, 0, 0)
         self._position.set_change_cb(self.on_pos_changed)
@@ -103,6 +104,9 @@ class Camera(EventDispatcher):
 
     def update(self):
         if self.renderer:
+            model_matrix = self.modelview_matrix.multiply(
+                self.renderer.fbo['view_mat'].inverse())
+            self.model_matrix = model_matrix
             self.renderer._update_matrices()
 
     def update_projection_matrix(self):
