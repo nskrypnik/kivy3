@@ -96,6 +96,9 @@ class WaveObject(object):
         # apply material for object
         if self.mtl_name in self.loader.mtl_contents:
             raw_material = self.loader.mtl_contents[self.mtl_name]
+            # shader ignores values
+            zeros = ['0', '0.0', '0.00', '0.000', '0.0000',
+                     '0.00000', '0.000000']
             for k, v in raw_material.iteritems():
                 _k = self._mtl_map.get(k, None)
                 if k in ["map_Kd", ]:
@@ -105,16 +108,13 @@ class WaveObject(object):
                     continue
                 if _k:
                     if len(v) == 1:
-                        if v[0] == '0.000000':
-                            v[0] = '0.000001'
+                        v[0] = '0.000001' if v[0] in zeros else v[0]
                         v = float(v[0])
                         if k == 'Tr':
                             v = 1. - v
                         setattr(material, _k, v)
                     else:
                         v = map(lambda x: float(x), v)
-                        if v == '0.000000':
-                            v = '0.000001'
                         setattr(material, _k, v)
 
         if not material.map:
