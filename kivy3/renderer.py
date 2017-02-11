@@ -44,8 +44,10 @@ from kivy.core.window import Window
 from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
 from kivy.graphics.transformation import Matrix
-from kivy.graphics import Callback, PushMatrix, PopMatrix, \
-                          Rectangle, Canvas, UpdateNormalMatrix
+from kivy.graphics import (
+    Callback, PushMatrix, PopMatrix,
+    Rectangle, Canvas, UpdateNormalMatrix
+)
 
 from .light import Light
 kivy3_path = os.path.abspath(os.path.dirname(kivy3.__file__))

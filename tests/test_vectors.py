@@ -2,7 +2,7 @@
 import unittest
 import math
 
-from kivy3 import Vector3, Vector4, Vector2 
+from kivy3 import Vector3, Vector4, Vector2
 
 # good values for vector 3, 4, 12, 84
 
@@ -87,7 +87,7 @@ class Vector3Test(unittest.TestCase):
         v = Vector3(12, 4, 3)
 
         self.assertEqual(v.length(), 13)
-        self.assertEqual(v.length_sq(), 13*13)
+        self.assertEqual(v.length_sq(), 13 * 13)
 
     def test_angle(self):
         v1 = Vector3(0, 0, 1)
@@ -130,7 +130,7 @@ class Vector2Test(unittest.TestCase):
             v = Vector2(1, 2, 3)
             assert False, "This should not be normally reached"
         except:
-            pass # test is passed normally
+            pass  # test is passed normally
 
     def test_attrbutes(self):
         v = Vector2(0, 0)

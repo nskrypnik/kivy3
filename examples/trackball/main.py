@@ -55,7 +55,7 @@ class ObjectTrackball(FloatLayout):
         x = self.radius * math.sin(_theta) * math.sin(_phi)
         y = self.radius * math.cos(_phi)
         self.camera.pos = x, y, z
-        self.camera.look_at((0,0,0))
+        self.camera.look_at((0, 0, 0))
 
 
 class MainApp(App):

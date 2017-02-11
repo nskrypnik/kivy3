@@ -28,10 +28,14 @@ Object3D class
 
 """
 
-from kivy.properties import NumericProperty, ListProperty, ObjectProperty, \
-                            AliasProperty
-from kivy.graphics import Scale, Rotate, PushMatrix, PopMatrix, Translate, \
-                          UpdateNormalMatrix
+from kivy.properties import (
+    NumericProperty, ListProperty,
+    ObjectProperty, AliasProperty
+)
+from kivy.graphics import (
+    Scale, Rotate, PushMatrix, PopMatrix,
+    Translate, UpdateNormalMatrix
+)
 from kivy.graphics.instructions import InstructionGroup
 from kivy.event import EventDispatcher
 
@@ -61,10 +65,10 @@ class Object3D(EventDispatcher):
         self._push_matrix = PushMatrix()
         self._translate = Translate(*self._position)
         self._rotors = {
-                        "x": Rotate(self._rotation.x, 1, 0, 0),
-                        "y": Rotate(self._rotation.y, 0, 1, 0),
-                        "z": Rotate(self._rotation.z, 0, 0, 1),
-                        }
+            "x": Rotate(self._rotation.x, 1, 0, 0),
+            "y": Rotate(self._rotation.y, 0, 1, 0),
+            "z": Rotate(self._rotation.z, 0, 0, 1),
+        }
 
         self._instructions = InstructionGroup()
 

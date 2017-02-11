@@ -31,6 +31,7 @@ DEFAULT_VERTEX_FORMAT = [
     (b'v_normal', 3, 'float'),
     (b'v_tc0', 2, 'float')]
 
+
 class Mesh(Object3D):
 
     def __init__(self, geometry, material, **kw):

@@ -18,5 +18,6 @@ class MaterialTest(unittest.TestCase):
         self.mat.shininess = 5
         self.assertEquals(self.mat.changes['Ns'], 5.)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -118,7 +118,7 @@ class WaveObject(object):
                         setattr(material, _k, v)
 
         if not material.map:
-            material.map = Image(folder+'/empty.png').texture
+            material.map = Image(folder + '/empty.png').texture
             material.texture_ratio = 0.0
         mesh = Mesh(geometry, material)
         return mesh
