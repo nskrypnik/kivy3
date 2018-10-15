@@ -97,7 +97,10 @@ class WaveObject(object):
             raw_material = self.loader.mtl_contents[self.mtl_name]
             for k, v in raw_material.iteritems():
                 _k = self._mtl_map.get(k, None)
+                # XXX: also handle map_Ka and map_Ks
                 if k in ["map_Kd", ]:
+                    # XXX: map file path may contains spaces.
+                    #      current implementation fails.
                     map_path = os.path.join(mtl_dirname, v[0])
                     if not os.path.exists(map_path):
                         msg = u'WaveObject: Texture not found <{}>'
