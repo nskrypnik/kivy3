@@ -31,6 +31,7 @@ Loaders for Wavefront format .obj files
 import os
 from .loader import BaseLoader
 from kivy.core.image import Image
+from kivy.logger import Logger
 from kivy3 import Object3D, Mesh, Material, Vector2
 from kivy3.core.geometry import Geometry
 from kivy3.core.face3 import Face3
@@ -98,6 +99,10 @@ class WaveObject(object):
                 _k = self._mtl_map.get(k, None)
                 if k in ["map_Kd", ]:
                     map_path = os.path.join(mtl_dirname, v[0])
+                    if not os.path.exists(map_path):
+                        msg = u'WaveObject: Texture not found <{}>'
+                        Logger.warning(msg.format(map_path))
+                        continue
                     tex = Image(map_path).texture
                     material.map = tex
                     continue
