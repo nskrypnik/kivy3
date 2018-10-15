@@ -188,21 +188,33 @@ class OBJLoader(BaseLoader):
             elif values[0] == 'f':
                 if not faces_section:
                     faces_section = True
-                face = []
-                texcoords = []
-                norms = []
-                for v in values[1:]:
-                    w = v.split('/')
-                    face.append(int(w[0]))
-                    if len(w) >= 2 and len(w[1]) > 0:
-                        texcoords.append(int(w[1]))
-                    else:
-                        texcoords.append(-1)
-                    if len(w) >= 3 and len(w[2]) > 0:
-                        norms.append(int(w[2]))
-                    else:
-                        norms.append(-1)
-                wvobj.faces.append((face, norms, texcoords))
+                # face values
+                f = values[1:]
+                # triangle
+                if len(f) == 3:
+                    fcs = [f]
+                # square, convert into two triangles
+                elif len(f) == 4:
+                    fcs = [
+                        f[:3],
+                        [f[0], f[2], f[3]]
+                    ]
+                for f in fcs:
+                    face = []
+                    texcoords = []
+                    norms = []
+                    for v in f:
+                        w = v.split('/')
+                        face.append(int(w[0]))
+                        if len(w) >= 2 and len(w[1]) > 0:
+                            texcoords.append(int(w[1]))
+                        else:
+                            texcoords.append(-1)
+                        if len(w) >= 3 and len(w[2]) > 0:
+                            norms.append(int(w[2]))
+                        else:
+                            norms.append(-1)
+                    wvobj.faces.append((face, norms, texcoords))
         yield wvobj
 
     def load(self, source, **kw):
