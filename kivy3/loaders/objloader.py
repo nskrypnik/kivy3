@@ -31,6 +31,7 @@ Loaders for Wavefront format .obj files
 import os
 from .loader import BaseLoader
 from kivy.core.image import Image
+from kivy.logger import Logger
 from kivy3 import Object3D, Mesh, Material, Vector2
 from kivy3.core.geometry import Geometry
 from kivy3.core.face3 import Face3
@@ -96,8 +97,15 @@ class WaveObject(object):
             raw_material = self.loader.mtl_contents[self.mtl_name]
             for k, v in raw_material.iteritems():
                 _k = self._mtl_map.get(k, None)
+                # XXX: also handle map_Ka and map_Ks
                 if k in ["map_Kd", ]:
+                    # XXX: map file path may contains spaces.
+                    #      current implementation fails.
                     map_path = os.path.join(mtl_dirname, v[0])
+                    if not os.path.exists(map_path):
+                        msg = u'WaveObject: Texture not found <{}>'
+                        Logger.warning(msg.format(map_path))
+                        continue
                     tex = Image(map_path).texture
                     material.map = tex
                     continue
@@ -183,21 +191,33 @@ class OBJLoader(BaseLoader):
             elif values[0] == 'f':
                 if not faces_section:
                     faces_section = True
-                face = []
-                texcoords = []
-                norms = []
-                for v in values[1:]:
-                    w = v.split('/')
-                    face.append(int(w[0]))
-                    if len(w) >= 2 and len(w[1]) > 0:
-                        texcoords.append(int(w[1]))
-                    else:
-                        texcoords.append(-1)
-                    if len(w) >= 3 and len(w[2]) > 0:
-                        norms.append(int(w[2]))
-                    else:
-                        norms.append(-1)
-                wvobj.faces.append((face, norms, texcoords))
+                # face values
+                f = values[1:]
+                # triangle
+                if len(f) == 3:
+                    fcs = [f]
+                # square, convert into two triangles
+                elif len(f) == 4:
+                    fcs = [
+                        f[:3],
+                        [f[0], f[2], f[3]]
+                    ]
+                for f in fcs:
+                    face = []
+                    texcoords = []
+                    norms = []
+                    for v in f:
+                        w = v.split('/')
+                        face.append(int(w[0]))
+                        if len(w) >= 2 and len(w[1]) > 0:
+                            texcoords.append(int(w[1]))
+                        else:
+                            texcoords.append(-1)
+                        if len(w) >= 3 and len(w[2]) > 0:
+                            norms.append(int(w[2]))
+                        else:
+                            norms.append(-1)
+                    wvobj.faces.append((face, norms, texcoords))
         yield wvobj
 
     def load(self, source, **kw):
