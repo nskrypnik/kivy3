@@ -27,9 +27,11 @@ from kivy3 import Vector3
 from kivy3.core.object3d import Object3D
 
 DEFAULT_VERTEX_FORMAT = [
-    (b'v_pos', 3, 'float'),
-    (b'v_normal', 3, 'float'),
-    (b'v_tc0', 2, 'float')]
+    ('v_pos', 3, 'float'),
+    ('v_normal', 3, 'float'),
+    ('v_tc0', 2, 'float')
+]
+DEFAULT_MESH_MODE = 'triangles'
 
 
 class Mesh(Object3D):
@@ -39,7 +41,8 @@ class Mesh(Object3D):
         self.geometry = geometry
         self.material = material
         self.mtl = self.material  # shortcut for material property
-        self.vertex_format = kw.pop("vertex_format", DEFAULT_VERTEX_FORMAT)
+        self.vertex_format = kw.pop('vertex_format', DEFAULT_VERTEX_FORMAT)
+        self.mesh_mode = kw.pop('mesh_mode', DEFAULT_MESH_MODE)
         self.create_mesh()
 
     def create_mesh(self):
@@ -64,11 +67,17 @@ class Mesh(Object3D):
                     vertices.extend([0, 0])
                 indices.append(idx)
                 idx += 1
-        kw = {"vertices": vertices, "indices": indices,
-              "fmt": self.vertex_format, "mode": "triangles"
-              }
+        if idx >= 65535 - 1:
+            msg = 'Mesh must not contain more than 65535 indices, {} given'
+            raise ValueError(msg.format(idx + 1))
+        kw = dict(
+            vertices=vertices,
+            indices=indices,
+            fmt=self.vertex_format,
+            mode=self.mesh_mode
+        )
         if self.material.map:
-            kw["texture"] = self.material.map
+            kw['texture'] = self.material.map
         self._mesh = KivyMesh(**kw)
 
     def custom_instructions(self):
