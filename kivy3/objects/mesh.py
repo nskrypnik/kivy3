@@ -27,9 +27,9 @@ from kivy3 import Vector3
 from kivy3.core.object3d import Object3D
 
 DEFAULT_VERTEX_FORMAT = [
-    ('v_pos', 3, 'float'),
-    ('v_normal', 3, 'float'),
-    ('v_tc0', 2, 'float')
+    (b'v_pos', 3, 'float'),
+    (b'v_normal', 3, 'float'),
+    (b'v_tc0', 2, 'float')
 ]
 DEFAULT_MESH_MODE = 'triangles'
 
