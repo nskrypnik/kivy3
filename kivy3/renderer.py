@@ -40,12 +40,16 @@ import kivy3
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.graphics.fbo import Fbo
+from kivy.core.window import Window
 from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics.opengl import glEnable, glDisable, GL_DEPTH_TEST
-from kivy.graphics import Callback, PushMatrix, PopMatrix, \
-                          Rectangle, Canvas, UpdateNormalMatrix
+from kivy.graphics.transformation import Matrix
+from kivy.graphics import (
+    Callback, PushMatrix, PopMatrix,
+    Rectangle, Canvas, UpdateNormalMatrix
+)
 
-
+from .light import Light
 kivy3_path = os.path.abspath(os.path.dirname(kivy3.__file__))
 
 
@@ -69,6 +73,7 @@ class Renderer(Widget):
         self.texture = self.fbo.texture
         self.camera = None
         self.scene = None
+        self.main_light = Light(renderer=self)
 
     def _config_fbo(self):
         # set shader file here
@@ -114,6 +119,10 @@ class Renderer(Widget):
         if self.camera:
             self.fbo['projection_mat'] = self.camera.projection_matrix
             self.fbo['modelview_mat'] = self.camera.modelview_matrix
+            self.fbo['model_mat'] = self.camera.model_matrix
+            self.fbo['camera_pos'] = [float(p) for p in self.camera.position]
+            self.fbo['view_mat'] = Matrix().rotate(
+                Window.rotation, 0.0, 0.0, 1.0)
         else:
             raise RendererError("Camera is not defined for renderer")
 

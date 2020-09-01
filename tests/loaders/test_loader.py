@@ -31,8 +31,10 @@ class BaseLoadertestCase(unittest.TestCase):
         # mock Clock.schedule_once
         self.sandbox.stub(Clock, 'schedule_once', call_fake=lambda x, t: x(0))
         loader.load('somesource', on_load=_on_load)
-        self.assertTrue(_on_load.is_called(), 'on_load callback should be called')
-
+        self.assertTrue(
+            _on_load.is_called(),
+            'on_load callback should be called'
+        )
 
 
 if __name__ == '__main__':

@@ -28,12 +28,15 @@ Loaders for Wavefront format .obj files
 
 """
 
-import os
 from .loader import BaseLoader
+from os.path import abspath, dirname, join, exists
 from kivy.core.image import Image
+from kivy.logger import Logger
 from kivy3 import Object3D, Mesh, Material, Vector2
 from kivy3.core.geometry import Geometry
 from kivy3.core.face3 import Face3
+
+folder = dirname(abspath(__file__))
 
 
 class WaveObject(object):
@@ -60,7 +63,7 @@ class WaveObject(object):
 
         geometry = Geometry()
         material = Material()
-        mtl_dirname = os.path.abspath(os.path.dirname(self.loader.mtl_source))
+        mtl_dirname = abspath(dirname(self.loader.mtl_source))
 
         v_idx = 0
         # create geometry for mesh
@@ -70,19 +73,19 @@ class WaveObject(object):
             tcs = f[2]
             face3 = Face3(0, 0, 0)
             for i, e in enumerate(['a', 'b', 'c']):
-                #get normal components
+                # get normal components
                 n = (0.0, 0.0, 0.0)
                 if norms[i] != -1:
                     n = self.loader.normals[norms[i] - 1]
                 face3.vertex_normals.append(n)
 
-                #get vertex components
+                # get vertex components
                 v = self.loader.vertices[verts[i] - 1]
                 geometry.vertices.append(v)
                 setattr(face3, e, v_idx)
                 v_idx += 1
 
-                #get texture coordinate components
+                # get texture coordinate components
                 t = (0.0, 0.0)
                 if tcs[i] != -1:
                     t = self.loader.texcoords[tcs[i] - 1]
@@ -94,22 +97,37 @@ class WaveObject(object):
         # apply material for object
         if self.mtl_name in self.loader.mtl_contents:
             raw_material = self.loader.mtl_contents[self.mtl_name]
-            for k, v in raw_material.iteritems():
+            # shader ignores values
+            zeros = ['0', '0.0', '0.00', '0.000', '0.0000',
+                     '0.00000', '0.000000']
+            for k, v in raw_material.items():
                 _k = self._mtl_map.get(k, None)
+                # TODO: also handle map_Ka and map_Ks
                 if k in ["map_Kd", ]:
-                    map_path = os.path.join(mtl_dirname, v[0])
+                    # TODO: map file path may contains spaces.
+                    #      current implementation fails.
+                    map_path = join(mtl_dirname, v[0])
+                    if not exists(map_path):
+                        msg = u'WaveObject: Texture not found <{}>'
+                        Logger.warning(msg.format(map_path))
+                        continue
                     tex = Image(map_path).texture
                     material.map = tex
                     continue
                 if _k:
                     if len(v) == 1:
+                        v[0] = '0.000001' if v[0] in zeros else v[0]
                         v = float(v[0])
                         if k == 'Tr':
                             v = 1. - v
                         setattr(material, _k, v)
                     else:
-                        v = map(lambda x: float(x), v)
+                        v = list(map(lambda x: float(x), v))
                         setattr(material, _k, v)
+
+        if not material.map:
+            material.map = Image(folder + '/empty.png').texture
+            material.texture_ratio = 0.0
         mesh = Mesh(geometry, material)
         return mesh
 
@@ -122,8 +140,9 @@ class OBJLoader(BaseLoader):
         self.mtl_contents = {}  # should be filled in load_mtl
 
     def load_mtl(self):
-        if not os.path.exists(self.mtl_source):
-            #TODO show warning about materials file is not found
+        if not exists(self.mtl_source):
+            msg = u'OBJLoader: mtl file not found <{}>'
+            Logger.warning(msg.format(self.mtl_source))
             return
         for line in open(self.mtl_source, "r"):
             if line.startswith('#'):
@@ -158,8 +177,8 @@ class OBJLoader(BaseLoader):
                 wvobj.name = values[1]
             elif values[0] == 'mtllib':
                 if not self.mtl_source:
-                    _obj_dir = os.path.abspath(os.path.dirname(self.source))
-                    self.mtl_source = os.path.join(_obj_dir, values[1])
+                    _obj_dir = abspath(dirname(self.source))
+                    self.mtl_source = join(_obj_dir, values[1])
                     self.load_mtl()
             elif values[0] == 'usemtl':
                 wvobj.mtl_name = values[1]
@@ -169,35 +188,47 @@ class OBJLoader(BaseLoader):
                     faces_section = False
                     yield wvobj
                     wvobj = WaveObject(self)
-                v = map(float, values[1:4])
+                v = list(map(float, values[1:4]))
                 if self.swapyz:
                     v = v[0], v[2], v[1]
                 self.vertices.append(v)
             elif values[0] == 'vn':
-                v = map(float, values[1:4])
+                v = list(map(float, values[1:4]))
                 if self.swapyz:
                     v = v[0], v[2], v[1]
                 self.normals.append(v)
             elif values[0] == 'vt':
-                self.texcoords.append(map(float, values[1:3]))
+                self.texcoords.append(list(map(float, values[1:3])))
             elif values[0] == 'f':
                 if not faces_section:
                     faces_section = True
-                face = []
-                texcoords = []
-                norms = []
-                for v in values[1:]:
-                    w = v.split('/')
-                    face.append(int(w[0]))
-                    if len(w) >= 2 and len(w[1]) > 0:
-                        texcoords.append(int(w[1]))
-                    else:
-                        texcoords.append(-1)
-                    if len(w) >= 3 and len(w[2]) > 0:
-                        norms.append(int(w[2]))
-                    else:
-                        norms.append(-1)
-                wvobj.faces.append((face, norms, texcoords))
+                # face values
+                f = values[1:]
+                # triangle
+                if len(f) == 3:
+                    fcs = [f]
+                # square, convert into two triangles
+                elif len(f) == 4:
+                    fcs = [
+                        f[:3],
+                        [f[0], f[2], f[3]]
+                    ]
+                for f in fcs:
+                    face = []
+                    texcoords = []
+                    norms = []
+                    for v in f:
+                        w = v.split('/')
+                        face.append(int(w[0]))
+                        if len(w) >= 2 and len(w[1]) > 0:
+                            texcoords.append(int(w[1]))
+                        else:
+                            texcoords.append(-1)
+                        if len(w) >= 3 and len(w[2]) > 0:
+                            norms.append(int(w[2]))
+                        else:
+                            norms.append(-1)
+                    wvobj.faces.append((face, norms, texcoords))
         yield wvobj
 
     def load(self, source, **kw):

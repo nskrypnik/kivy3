@@ -2,6 +2,7 @@
 Module provides some test utilities
 '''
 
+
 class Spy:
     '''
     This is the test helper which helps us to check whether function has been
@@ -40,7 +41,7 @@ class Sandbox:
         if not callable(getattr(obj, func_name)):
             raise Exception('You may stub only callable objects')
         # save previous value of stubbed function
-        if not obj in self._storage:
+        if obj not in self._storage:
             obj_storage = {}
             self._storage[obj] = obj_storage
         else:

@@ -14,6 +14,7 @@ shader_file = os.path.join(_this_path, "../textures/simple.glsl")
 obj_file = os.path.join(_this_path, "../textures/orion.obj")
 mtl_file = os.path.join(_this_path, "../textures/orion.mtl")
 
+
 class MainApp(App):
 
     def build(self):
@@ -47,8 +48,8 @@ class MainApp(App):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
-    def _on_keyboard_down(self,  keyboard, keycode, text, modifiers):
-        if  keycode[1] == 'w':
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        if keycode[1] == 'w':
             self.camera.pos.z -= 0.2
         elif keycode[1] == 's':
             self.camera.pos.z += 0.2
