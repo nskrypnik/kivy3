@@ -57,9 +57,9 @@ class Sandbox:
         if not hasattr(self, '_storage'):
             return
 
-        for obj, obj_storage in self._storage.iteritems():
+        for obj, obj_storage in self._storage.items():
             keys_to_del = []
-            for key, original_value in obj_storage.iteritems():
+            for key, original_value in obj_storage.items():
                 # restore all original value to an object
                 setattr(obj, key, original_value)
                 keys_to_del.append(key)

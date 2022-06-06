@@ -28,7 +28,6 @@ to use custom shader file
 """
 
 import os
-import kivy3
 from kivy.app import App
 from kivy3 import Scene, Renderer, PerspectiveCamera
 from kivy3.loaders import OBJMTLLoader

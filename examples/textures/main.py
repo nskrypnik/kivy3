@@ -1,6 +1,4 @@
-
 import os
-import kivy3
 from kivy.app import App
 from kivy.clock import Clock
 from kivy3 import Scene, Renderer, PerspectiveCamera

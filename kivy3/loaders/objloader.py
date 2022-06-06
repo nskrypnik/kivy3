@@ -94,7 +94,7 @@ class WaveObject(object):
         # apply material for object
         if self.mtl_name in self.loader.mtl_contents:
             raw_material = self.loader.mtl_contents[self.mtl_name]
-            for k, v in raw_material.iteritems():
+            for k, v in raw_material.items():
                 _k = self._mtl_map.get(k, None)
                 if k in ["map_Kd", ]:
                     map_path = os.path.join(mtl_dirname, v[0])
